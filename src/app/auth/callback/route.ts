@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 
+/**
+ * Firebase handles OAuth redirects client-side via signInWithPopup / signInWithRedirect.
+ * This route is kept as a no-op redirect for backwards-compatibility with any
+ * bookmarked /auth/callback links.
+ */
 export async function GET(request: Request) {
   const url = new URL(request.url)
-  const code = url.searchParams.get('code')
   const next = url.searchParams.get('next') || '/account'
-  const supabase = await createClient()
-  if (code && supabase) {
-    await supabase.auth.exchangeCodeForSession(code)
-  }
   return NextResponse.redirect(new URL(next, url.origin))
 }

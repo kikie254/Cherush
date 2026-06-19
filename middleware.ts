@@ -1,8 +1,12 @@
-import type { NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
+import { NextResponse, type NextRequest } from 'next/server'
 
+/**
+ * Middleware — Firebase auth uses session cookies set by the /api/auth/session
+ * route, so we only need to pass requests through. Route-level protection is
+ * handled by requireAdmin() in each Server Component.
+ */
 export async function middleware(request: NextRequest) {
-  return updateSession(request)
+  return NextResponse.next()
 }
 
 export const config = {

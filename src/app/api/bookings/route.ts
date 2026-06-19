@@ -4,6 +4,7 @@ import { getRooms, getPricing } from '@/lib/queries'
 import { quoteBooking } from '@/lib/availability'
 import { guardRateLimit } from '@/lib/rate-limit'
 import { sendBookingEmails } from '@/lib/email'
+import { adminDb } from '@/lib/firebase/admin'
 import type { Booking } from '@/types'
 
 export async function POST(request: Request) {
@@ -37,9 +38,17 @@ export async function POST(request: Request) {
     status: 'pending',
     special_requests: parsed.data.specialRequests || null,
     created_at: new Date().toISOString(),
-    rooms: { name: room.name }
+    rooms: { name: room.name },
+  }
+
+  // Persist to Firestore if configured
+  if (adminDb) {
+    await adminDb.collection('bookings').doc(booking.id).set(booking)
   }
 
   await sendBookingEmails(booking, room)
-  return NextResponse.json({ bookingCode: booking.booking_code, message: 'Booking request received. We will confirm availability shortly.' })
+  return NextResponse.json({
+    bookingCode: booking.booking_code,
+    message: 'Booking request received. We will confirm availability shortly.',
+  })
 }

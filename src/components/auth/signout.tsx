@@ -1,7 +1,8 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/browser'
+import { auth } from '@/lib/firebase/client'
+import { signOut } from 'firebase/auth'
 
 export function SignOutButton() {
   return (
@@ -9,8 +10,9 @@ export function SignOutButton() {
       type="button"
       variant="secondary"
       onClick={async () => {
-        const supabase = createClient()
-        await supabase?.auth.signOut()
+        if (auth) await signOut(auth)
+        // Clear the server-side session cookie
+        await fetch('/api/auth/session', { method: 'DELETE' })
         window.location.href = '/'
       }}
     >

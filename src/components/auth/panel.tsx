@@ -2,8 +2,22 @@
 
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/browser'
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth'
+import { auth } from '@/lib/firebase/client'
 import { Button } from '@/components/ui/button'
+
+async function createSession(idToken: string) {
+  await fetch('/api/auth/session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+  })
+}
 
 export function AuthPanel() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
@@ -14,32 +28,43 @@ export function AuthPanel() {
   async function handleSubmit(formData: FormData) {
     const email = String(formData.get('email') || '')
     const password = String(formData.get('password') || '')
-    const supabase = createClient()
 
-    if (!supabase) {
-      setMessage('Supabase is not configured. Add environment variables to enable authentication.')
+    if (!auth) {
+      setMessage('Firebase is not configured. Add environment variables to enable authentication.')
       return
     }
 
-    if (mode === 'signin') {
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      setMessage(error?.message || 'Signed in successfully.')
-      if (!error) window.location.href = next
-      return
+    try {
+      let credential
+      if (mode === 'signin') {
+        credential = await signInWithEmailAndPassword(auth, email, password)
+      } else {
+        credential = await createUserWithEmailAndPassword(auth, email, password)
+      }
+      const idToken = await credential.user.getIdToken()
+      await createSession(idToken)
+      window.location.href = next
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong.'
+      setMessage(msg)
     }
-
-    const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/auth/callback` } })
-    setMessage(error?.message || 'Account created. Check your email if confirmation is enabled.')
   }
 
   async function handleGoogle() {
-    const supabase = createClient()
-    if (!supabase) {
-      setMessage('Supabase is not configured. Add environment variables to enable Google sign-in.')
+    if (!auth) {
+      setMessage('Firebase is not configured. Add environment variables to enable Google sign-in.')
       return
     }
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` } })
-    if (error) setMessage(error.message)
+    try {
+      const provider = new GoogleAuthProvider()
+      const credential = await signInWithPopup(auth, provider)
+      const idToken = await credential.user.getIdToken()
+      await createSession(idToken)
+      window.location.href = next
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Google sign-in failed.'
+      setMessage(msg)
+    }
   }
 
   return (

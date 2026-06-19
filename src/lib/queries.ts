@@ -1,6 +1,75 @@
 import { cache } from 'react'
+import { adminDb } from '@/lib/firebase/admin'
 import type { Booking, ContentBlock, GalleryItem, PricingRule, Review, Room, SiteSetting } from '@/types'
 import { attractions, faqs, seedContent, seedGallery, seedPricing, seedReviews, seedRooms, seedSettings } from '@/lib/site-data'
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+async function firestoreCollection<T>(collection: string): Promise<T[] | null> {
+  if (!adminDb) return null
+  const snap = await adminDb.collection(collection).get()
+  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as T[]
+}
+
+// ---------------------------------------------------------------------------
+// Rooms
+// ---------------------------------------------------------------------------
+
+export const getRooms = cache(async (): Promise<Room[]> => {
+  const rows = await firestoreCollection<Room>('rooms')
+  return rows && rows.length > 0 ? rows : seedRooms
+})
+
+// ---------------------------------------------------------------------------
+// Reviews
+// ---------------------------------------------------------------------------
+
+export const getReviews = cache(async (): Promise<Review[]> => {
+  const rows = await firestoreCollection<Review>('reviews')
+  return rows && rows.length > 0 ? rows : seedReviews
+})
+
+// ---------------------------------------------------------------------------
+// Gallery
+// ---------------------------------------------------------------------------
+
+export const getGallery = cache(async (): Promise<GalleryItem[]> => {
+  const rows = await firestoreCollection<GalleryItem>('gallery')
+  return rows && rows.length > 0 ? rows : seedGallery
+})
+
+// ---------------------------------------------------------------------------
+// Content blocks
+// ---------------------------------------------------------------------------
+
+export const getContent = cache(async (): Promise<ContentBlock[]> => {
+  const rows = await firestoreCollection<ContentBlock>('content')
+  return rows && rows.length > 0 ? rows : seedContent
+})
+
+// ---------------------------------------------------------------------------
+// Pricing rules
+// ---------------------------------------------------------------------------
+
+export const getPricing = cache(async (): Promise<PricingRule[]> => {
+  const rows = await firestoreCollection<PricingRule>('pricing_rules')
+  return rows && rows.length > 0 ? rows : seedPricing
+})
+
+// ---------------------------------------------------------------------------
+// Site settings
+// ---------------------------------------------------------------------------
+
+export const getSettings = cache(async (): Promise<SiteSetting[]> => {
+  const rows = await firestoreCollection<SiteSetting>('site_settings')
+  return rows && rows.length > 0 ? rows : seedSettings
+})
+
+// ---------------------------------------------------------------------------
+// Bookings
+// ---------------------------------------------------------------------------
 
 const mockBookings: Booking[] = [
   {
@@ -17,46 +86,37 @@ const mockBookings: Booking[] = [
     status: 'approved',
     special_requests: 'Late arrival',
     created_at: '2026-06-01T10:00:00.000Z',
-    rooms: { name: seedRooms[0].name }
-  }
+    rooms: { name: seedRooms[0].name },
+  },
 ]
 
-export const getRooms = cache(async (): Promise<Room[]> => seedRooms)
-export const getReviews = cache(async (): Promise<Review[]> => seedReviews)
-export const getGallery = cache(async (): Promise<GalleryItem[]> => seedGallery)
-export const getContent = cache(async (): Promise<ContentBlock[]> => seedContent)
-export const getPricing = cache(async (): Promise<PricingRule[]> => seedPricing)
-export const getSettings = cache(async (): Promise<SiteSetting[]> => seedSettings)
-export const getBookings = cache(async (): Promise<Booking[]> => mockBookings)
+export const getBookings = cache(async (): Promise<Booking[]> => {
+  const rows = await firestoreCollection<Booking>('bookings')
+  return rows && rows.length > 0 ? rows : mockBookings
+})
+
+// ---------------------------------------------------------------------------
+// Admin dashboard aggregate
+// ---------------------------------------------------------------------------
 
 export const getAdminData = cache(async () => {
-  const rooms = await getRooms()
-  const bookings = await getBookings()
-  const gallery = await getGallery()
-  const content = await getContent()
-  const pricing = await getPricing()
-  const settings = await getSettings()
+  const [rooms, bookings, gallery, content, pricing, settings] = await Promise.all([
+    getRooms(),
+    getBookings(),
+    getGallery(),
+    getContent(),
+    getPricing(),
+    getSettings(),
+  ])
+
   const revenue = bookings
-    .filter((booking) => ['approved', 'completed'].includes(booking.status))
-    .reduce((sum, booking) => sum + booking.total_amount, 0)
-  const upcoming = bookings.filter((booking) => booking.status === 'approved').length
-  const pending = bookings.filter((booking) => booking.status === 'pending').length
+    .filter((b) => ['approved', 'completed'].includes(b.status))
+    .reduce((sum, b) => sum + b.total_amount, 0)
+  const upcoming = bookings.filter((b) => b.status === 'approved').length
+  const pending = bookings.filter((b) => b.status === 'pending').length
   const occupancyRate = rooms.length ? Math.round((upcoming / rooms.length) * 100) : 0
 
-  return {
-    rooms,
-    bookings,
-    gallery,
-    content,
-    pricing,
-    settings,
-    stats: {
-      revenue,
-      upcoming,
-      pending,
-      occupancyRate
-    }
-  }
+  return { rooms, bookings, gallery, content, pricing, settings, stats: { revenue, upcoming, pending, occupancyRate } }
 })
 
 export { faqs, attractions }
