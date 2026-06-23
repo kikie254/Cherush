@@ -1,43 +1,27 @@
 import { Award, Wifi, ShieldCheck, HeartHandshake, CheckCircle } from 'lucide-react'
 
 const BADGES = [
-  {
-    icon: Award,
-    title: '4.9/5 Rating',
-    desc: 'Verified guest satisfaction score across all booking channels'
-  },
-  {
-    icon: Wifi,
-    title: 'Fiber WiFi',
-    desc: 'Uninterrupted internet connection with power backup systems'
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Secure Compound',
-    desc: 'Gated residential property with 24/7 security presence'
-  },
-  {
-    icon: HeartHandshake,
-    title: 'Superhost Standard',
-    desc: 'Attentive, locally connected hosting for a seamless stay'
-  }
+  { icon: Award, title: 'Guest Promises', desc: 'Guaranteed comfort & privacy' },
+  { icon: ShieldCheck, title: 'Cleaning Standards', desc: 'Rigorous deep cleaning protocols' },
+  { icon: HeartHandshake, title: 'Local Experience', desc: 'Curated connections & itineraries' },
+  { icon: CheckCircle, title: 'Rapid Response', desc: 'Under 1 hour host response time' },
 ]
 
 export function TrustBadges() {
   return (
-    <section className="bg-primary/5 py-16 border-y border-primary/10">
-      <div className="mx-auto max-w-7xl px-6 md:px-12">
-        <div className="grid md:grid-cols-4 gap-8 md:gap-12">
+    <section className="bg-white py-12 border-b border-primary/5">
+      <div className="mx-auto max-w-[1400px] px-6">
+        <div className="flex flex-wrap md:flex-nowrap justify-between gap-8 md:gap-4 overflow-x-auto no-scrollbar">
           {BADGES.map((badge, idx) => {
             const Icon = badge.icon
             return (
-              <div key={idx} className="flex gap-4 md:flex-col md:items-start group transition-all duration-300">
-                <div className="h-12 w-12 rounded-2xl bg-primary/5 flex items-center justify-center shrink-0 text-accent group-hover:bg-accent group-hover:text-white transition-colors duration-300">
-                  <Icon className="w-6 h-6" />
+              <div key={idx} className="flex items-center gap-4 group transition-all duration-300 min-w-[240px]">
+                <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center shrink-0 text-accent transition-transform duration-300 group-hover:scale-110">
+                  <Icon className="w-4 h-4" />
                 </div>
-                <div className="space-y-2">
-                  <h4 className="font-display text-xl text-primary font-semibold tracking-tight">{badge.title}</h4>
-                  <p className="text-sm leading-relaxed text-muted">{badge.desc}</p>
+                <div>
+                  <h4 className="font-display text-lg text-primary tracking-tight leading-none mb-1">{badge.title}</h4>
+                  <p className="text-xs text-muted/80">{badge.desc}</p>
                 </div>
               </div>
             )

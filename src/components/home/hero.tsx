@@ -16,7 +16,7 @@ export function Hero({ image }: { image: string }) {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"])
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
 
-  const headline = "Train. Recover. Belong.".split(" ")
+  const headline = "Stay where mornings begin differently.".split(" ")
 
   return (
     <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-primary flex items-end">
@@ -53,7 +53,7 @@ export function Hero({ image }: { image: string }) {
             Cherush Stay Iten
           </motion.p>
           
-          <h1 className="mt-8 font-display text-6xl md:text-8xl lg:text-9xl leading-[0.9] tracking-tight flex flex-wrap gap-x-4 md:gap-x-8">
+          <h1 className="mt-8 font-display text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight flex flex-wrap gap-x-3 md:gap-x-4">
             {headline.map((word, i) => (
               <motion.span
                 key={i}
@@ -77,7 +77,7 @@ export function Hero({ image }: { image: string }) {
             transition={{ duration: 0.8, delay: 1.4, ease: [0.16, 1, 0.3, 1] }}
             className="mt-8 max-w-xl text-lg md:text-xl leading-relaxed text-white/80 font-light"
           >
-            Premium boutique hospitality in Kenya&apos;s home of champions for runners, families, explorers, and remote workers.
+            Boutique stays in Iten designed for athletes, explorers and peaceful escapes.
           </motion.p>
           
           <motion.div 

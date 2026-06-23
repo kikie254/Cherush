@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -53,18 +53,22 @@ export function Button({ href, variant = 'primary', className, children, magneti
     </>
   )
 
-  const Wrapper = ({ children }: { children: React.ReactNode }) => (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouse}
-      onMouseLeave={reset}
-      animate={{ x: position.x, y: position.y }}
-      transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
-      className="inline-block"
-    >
-      {children}
-    </motion.div>
-  )
+  const Wrapper = ({ children }: { children: React.ReactNode }) => {
+    const shouldReduceMotion = useReducedMotion()
+    
+    return (
+      <motion.div
+        ref={ref}
+        onMouseMove={handleMouse}
+        onMouseLeave={reset}
+        animate={shouldReduceMotion ? { x: 0, y: 0 } : { x: position.x, y: position.y }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20, mass: 0.5 }}
+        className="inline-block"
+      >
+        {children}
+      </motion.div>
+    )
+  }
 
   if (href) {
     return (

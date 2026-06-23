@@ -262,6 +262,21 @@ export function BookingWidget({ rooms, initialRoomSlug }: { rooms: Room[]; initi
               {data?.quote ? formatCurrency(data.quote.total) : '-'}
             </span>
           </div>
+          
+          <div className="pt-8 mt-8 border-t border-white/10 space-y-4">
+            <div className="flex items-center gap-3 text-white/90">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs">No payment required until confirmed</span>
+            </div>
+            <div className="flex items-center gap-3 text-white/90">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs">Guaranteed secure booking process</span>
+            </div>
+            <div className="flex items-center gap-3 text-white/90">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs">Direct communication with host</span>
+            </div>
+          </div>
         </div>
       </aside>
     </div>
