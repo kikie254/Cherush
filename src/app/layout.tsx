@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { AppProviders } from '@/components/providers/app-providers'
+import { SmoothScroll } from '@/components/providers/smooth-scroll'
 import { absoluteUrl } from '@/lib/utils'
 import { siteConfig } from '@/lib/constants'
 import './globals.css'
@@ -31,14 +32,16 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[var(--color-background)] text-[var(--color-text)] antialiased">
-        <AppProviders>
-          <div className="flex min-h-screen flex-col">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-        </AppProviders>
+      <body className="min-h-screen">
+        <SmoothScroll>
+          <AppProviders>
+            <div className="flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </AppProviders>
+        </SmoothScroll>
       </body>
     </html>
   )

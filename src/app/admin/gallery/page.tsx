@@ -1,9 +1,7 @@
-import { SectionHeading } from '@/components/ui/section-heading'
+import { getGallery } from '@/lib/queries'
+import { AdminGalleryClient } from '@/components/admin/gallery-manager'
 
-export default function GalleryAdminPage() {
-  return (
-    <div className="rounded-[32px] bg-white p-8 shadow-[var(--shadow-soft)]">
-      <SectionHeading eyebrow="Admin" title="Gallery" body="This section is scaffolded and ready for Supabase-backed CRUD wiring or richer dashboard widgets." />
-    </div>
-  )
+export default async function GalleryAdminPage() {
+  const gallery = await getGallery()
+  return <AdminGalleryClient gallery={gallery} />
 }

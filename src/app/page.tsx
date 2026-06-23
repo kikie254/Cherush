@@ -1,67 +1,127 @@
 import { Hero } from '@/components/home/hero'
-import { RoomCard } from '@/components/home/room-card'
+import { RoomEditorial } from '@/components/home/room-editorial'
+import { HorizontalExperience } from '@/components/home/horizontal-experience'
 import { Container } from '@/components/ui/container'
 import { SectionHeading } from '@/components/ui/section-heading'
-import { Button } from '@/components/ui/button'
-import { getContent, getReviews, getRooms, faqs } from '@/lib/queries'
+import { TrustBadges } from '@/components/home/trust-badges'
+import { WhyChooseUs } from '@/components/home/why-choose-us'
+import { DistanceCalculator } from '@/components/ui/distance-calculator'
+import { FAQSection } from '@/components/home/faq-section'
+import { FloatingActions } from '@/components/home/floating-actions'
+import { getReviews, getRooms } from '@/lib/queries'
 import { images } from '@/lib/site-data'
+import { getLodgingBusinessSchema } from '@/lib/seo'
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
+
+export const revalidate = 3600 // Cache for 1 hour
 
 export default async function HomePage() {
-  const [rooms, reviews, content] = await Promise.all([getRooms(), getReviews(), getContent()])
-  const experience = content.find((item) => item.page === 'home' && item.slug === 'experience')
+  const [rooms, reviews] = await Promise.all([getRooms(), getReviews()])
 
   return (
     <>
+      {/* JSON-LD structured schema on Home */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(getLodgingBusinessSchema()) }}
+      />
+
       <Hero image={images.hero} />
-      <section className="py-20">
+      
+      {/* Trust Badges */}
+      <TrustBadges />
+
+      <section className="py-32 relative bg-background">
         <Container className="space-y-10">
-          <SectionHeading eyebrow="Rooms" title="Stay spaces designed for recovery and ease" body="Choose from flexible layouts for solo stays, couples, families, or longer residential visits in Iten." />
-          <div className="grid gap-6 lg:grid-cols-3">
-            {rooms.map((room) => <RoomCard key={room.id} room={room} />)}
-          </div>
-        </Container>
-      </section>
-      <section className="bg-white py-20">
-        <Container className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-start">
-          <SectionHeading eyebrow="Experience" title={experience?.title || 'The Cherush experience'} body={experience?.body} />
-          <div className="rounded-[32px] bg-[var(--color-primary)] p-8 text-white shadow-[var(--shadow-soft)]">
-            <p className="text-sm uppercase tracking-[0.3em] text-white/65">At a glance</p>
-            <ul className="mt-6 space-y-4 text-base leading-8 text-white/80">
-              <li>Peaceful mornings and comfortable evenings</li>
-              <li>Fast WiFi and work-friendly setups</li>
-              <li>Easy access to viewpoints, tracks, and drives</li>
-              <li>Flexible stays from short breaks to long residencies</li>
-            </ul>
-            <div className="mt-8"><Button href="/experience" variant="secondary">Explore the area</Button></div>
-          </div>
-        </Container>
-      </section>
-      <section className="py-20">
-        <Container className="space-y-10">
-          <SectionHeading eyebrow="Guest reflections" title="A calm, practical, and polished base in Iten" center />
-          <div className="grid gap-6 lg:grid-cols-2">
-            {reviews.map((review) => (
-              <article key={review.id} className="rounded-[28px] bg-white p-8 shadow-[var(--shadow-soft)]">
-                <p className="text-lg leading-8 text-[var(--color-primary)]">“{review.quote}”</p>
-                <p className="mt-6 text-sm text-[var(--color-muted)]">{review.guest_name}{review.origin ? ` · ${review.origin}` : ''}</p>
-              </article>
+          <SectionHeading 
+            eyebrow="The Residences" 
+            title="Spaces designed for recovery and ease" 
+            body="Choose from flexible layouts for solo stays, couples, families, or longer residential visits in Iten. Each space offers uncompromising comfort, distinct design, and absolute privacy." 
+          />
+          <div className="mt-20 flex flex-col gap-10">
+            {rooms.map((room, index) => (
+              <RoomEditorial key={room.id} room={room} index={index} />
             ))}
           </div>
         </Container>
       </section>
-      <section className="bg-white py-20">
-        <Container className="space-y-10">
-          <SectionHeading eyebrow="FAQ" title="Helpful details before you stay" />
-          <div className="grid gap-5 lg:grid-cols-2">
-            {faqs.map((faq) => (
-              <article key={faq.question} className="rounded-[28px] border border-black/5 bg-[var(--color-background)] p-6">
-                <h3 className="text-lg font-semibold text-[var(--color-primary)]">{faq.question}</h3>
-                <p className="mt-3 text-sm leading-7 text-[var(--color-muted)]">{faq.answer}</p>
-              </article>
-            ))}
+
+      {/* Why Choose Us */}
+      <WhyChooseUs />
+
+      <HorizontalExperience />
+
+      {/* Local SEO Proximity section with Distance Calculator */}
+      <section className="py-32 bg-background border-y border-primary/5">
+        <Container className="space-y-12">
+          <SectionHeading
+            eyebrow="Prime Proximity"
+            title="Local travel and running trails distance guide"
+            body="Cherush Stay is located in a quiet residential pocket of Iten. Calculate distances and transit times to popular athletic and scenic hubs."
+          />
+          <div className="mt-12">
+            <DistanceCalculator />
           </div>
         </Container>
       </section>
+
+      <section className="py-32 bg-white relative overflow-hidden">
+        <Container>
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <div>
+              <SectionHeading 
+                eyebrow="Guest reflections" 
+                title="A calm, practical base in Iten" 
+                body="Hear from athletes, remote workers, and families who have made Cherush their temporary home in the highlands."
+              />
+              <div className="mt-16 relative">
+                <div className="absolute -left-6 -top-6 text-8xl text-premium/20 font-display leading-none">"</div>
+                <div className="space-y-16">
+                  {reviews.slice(0, 2).map((review) => (
+                    <article key={review.id} className="relative z-10">
+                      <p className="text-2xl md:text-3xl leading-relaxed text-primary font-display">
+                        {review.quote}
+                      </p>
+                      <div className="mt-8 flex items-center gap-4">
+                        <div className="h-px w-8 bg-accent" />
+                        <p className="text-sm tracking-widest uppercase text-muted font-medium">
+                          {review.guest_name}{review.origin ? ` — ${review.origin}` : ''}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="relative h-[80vh] w-full rounded-[24px] overflow-hidden">
+              <Image src={images.garden} alt="Cherush garden" fill className="object-cover" sizes="(min-width: 1024px) 50vw, 100vw" />
+              <div className="absolute inset-0 bg-primary/10" />
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Dynamic Animated Accordion FAQs */}
+      <FAQSection />
+
+      <section className="py-32 bg-primary text-white">
+        <Container className="text-center flex flex-col items-center">
+          <SectionHeading 
+            eyebrow="Your Journey Begins" 
+            title="Ready to experience Iten?" 
+            body="Secure your dates for an upcoming training block, remote work stay, or family retreat."
+            center
+            className="text-white [&_h2]:text-white [&_p]:text-white/80"
+          />
+          <div className="mt-16">
+            <Button href="/bookings" variant="premium" className="scale-110">Reserve Your Stay</Button>
+          </div>
+        </Container>
+      </section>
+
+      {/* Floating CTA & WhatsApp Action Buttons */}
+      <FloatingActions />
     </>
   )
 }

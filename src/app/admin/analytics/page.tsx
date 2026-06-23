@@ -1,9 +1,7 @@
-import { SectionHeading } from '@/components/ui/section-heading'
+import { getBookings, getRooms } from '@/lib/queries'
+import { AdminAnalyticsClient } from '@/components/admin/analytics-dashboard'
 
-export default function AnalyticsAdminPage() {
-  return (
-    <div className="rounded-[32px] bg-white p-8 shadow-[var(--shadow-soft)]">
-      <SectionHeading eyebrow="Admin" title="Analytics" body="This section is scaffolded and ready for Supabase-backed CRUD wiring or richer dashboard widgets." />
-    </div>
-  )
+export default async function AnalyticsAdminPage() {
+  const [bookings, rooms] = await Promise.all([getBookings(), getRooms()])
+  return <AdminAnalyticsClient bookings={bookings} rooms={rooms} />
 }

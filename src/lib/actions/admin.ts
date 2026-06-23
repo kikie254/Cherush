@@ -115,6 +115,18 @@ export async function updateBookingStatus(id: string, status: BookingStatus): Pr
   if (!adminDb) return { ok: false, error: 'Firebase Admin not configured.' }
 
   await adminDb.collection('bookings').doc(id).update({ status })
+  
+  try {
+    const doc = await adminDb.collection('bookings').doc(id).get()
+    const data = doc.data() as Booking
+    if (data) {
+      const { sendStatusEmail } = await import('@/lib/email')
+      await sendStatusEmail(data, status)
+    }
+  } catch (e) {
+    console.error('Failed to send status email', e)
+  }
+
   return { ok: true }
 }
 

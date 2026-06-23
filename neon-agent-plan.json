@@ -1,0 +1,78 @@
+﻿node.exe : INFO: {
+At C:\Users\ADMIN\AppData\Roaming\npm\neonctl.ps1:24 char:5
++     & "node$exe"  "$basedir/node_modules/neonctl/cli.js" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (INFO: {:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  "phase": "setup",
+  "status": "getting_started",
+  "nextAction": {
+    "type": "agent_action",
+    "prerequisite": "https://neon.com/docs/ai/skills/neon-postgres/references/getting-started.md",
+    "steps": [
+      {
+        "id": "select_org",
+        "description": "List the user's Neon organizations using the CLI command below. If only one org exists, use it 
+automatically. If multiple orgs exist, ask the user which one to use. Remember the selected org ID for the next 
+steps.",
+        "command": "CI= npx -y neonctl orgs list --output json"
+      },
+      {
+        "id": "select_or_create_project",
+        "description": "List existing Neon projects in the selected organization using the CLI command below (replace 
+<org-id> with the selected org ID). Ask the user whether they want to use an existing project or create a new one. If 
+creating new, ask the user for a project name (suggest the current directory name). IMPORTANT: Always include --org-id 
+when creating a project to avoid interactive prompts.",
+        "command": "CI= npx -y neonctl projects list --org-id <org-id> --output json"
+      },
+      {
+        "id": "create_project_if_needed",
+        "description": "If the user chose to create a new project, create it using the CLI command below (replace 
+<org-id> and <project-name>). If the user chose an existing project, skip this step.",
+        "command": "CI= npx -y neonctl projects create --name <project-name> --org-id <org-id> --output json"
+      },
+      {
+        "id": "create_neon_context",
+        "description": "Update the .neon context file in the project root with the selected org and project IDs. 
+IMPORTANT: If a .neon file already exists, you MUST read it first, then merge the new orgId and projectId into the 
+existing content. Do NOT overwrite the file ΓÇö other fields (like _init, branch, etc.) must be preserved. If no .neon 
+file exists, create one. The file is JSON. Add/update only the orgId and projectId fields: {\"orgId\": \"<org-id>\", 
+\"projectId\": \"<project-id>\", ...existing fields}. This file is safe to commit ΓÇö it contains no secrets."
+      },
+      {
+        "id": "install_dependencies",
+        "description": "Check if node_modules exists in the project root. If not, install project dependencies using 
+the appropriate package manager (check for pnpm-lock.yaml, yarn.lock, bun.lockb, or default to npm). This must be done 
+before `neonctl env pull` because the project's Neon config file may import packages that need to be installed first.",
+        "command": "npm install"
+      },
+      {
+        "id": "pull_env",
+        "description": "Now that the .neon context file is in place and dependencies are installed, run `neonctl env 
+pull` to populate the project's environment variables. This automatically writes the database connection string (and 
+any other Neon-managed env vars) to the correct env file. It reads the .neon context file to determine the project, 
+and writes to the appropriate env file for the project. Ensure the target env file is listed in .gitignore.",
+        "command": "CI= npx -y neonctl env pull"
+      },
+      {
+        "id": "install_driver",
+        "description": "Install the Neon serverless driver for direct database access.",
+        "command": "npm install @neondatabase/serverless"
+      },
+      {
+        "id": "verify_connection",
+        "description": "Verify the database connection works by running a SQL query against the Neon database. Write 
+and run a short script that connects using DATABASE_URL from the project's env file and executes `SELECT 1` (or 
+queries a table from the migration if migrations were run). Do NOT use the neonctl CLI or MCP tools for this ΓÇö use a 
+direct database connection to verify end-to-end connectivity."
+      }
+    ],
+    "onComplete": {
+      "type": "run_shell_command",
+      "command": "neonctl init --agent --data '{\"step\":\"finalize\",\"agent\":\"vscode\"}'",
+      "description": "Run this command to complete the setup. This is the final step ΓÇö do not run any other neonctl 
+init commands after this."
+    }
+  }
+}

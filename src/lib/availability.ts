@@ -27,10 +27,14 @@ export function quoteBooking(room: Room, checkIn: string, checkOut: string, rule
   )
   if (rule) nightly = Math.round(nightly * rule.multiplier)
   if (room.monthly_rate && nights >= 28) {
-    return { nights, total: room.monthly_rate, nightlyRate: Math.round(room.monthly_rate / nights) }
+    const monthlyRatePerNight = room.monthly_rate / 30
+    const total = Math.round(nights * monthlyRatePerNight)
+    return { nights, total, nightlyRate: Math.round(monthlyRatePerNight) }
   }
   if (room.weekly_rate && nights >= 7) {
-    return { nights, total: room.weekly_rate + Math.max(0, nights - 7) * nightly, nightlyRate: nightly }
+    const weeklyRatePerNight = room.weekly_rate / 7
+    const total = Math.round(nights * weeklyRatePerNight)
+    return { nights, total, nightlyRate: Math.round(weeklyRatePerNight) }
   }
   return { nights, total: nights * nightly, nightlyRate: nightly }
 }

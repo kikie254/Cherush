@@ -1,9 +1,7 @@
-import { SectionHeading } from '@/components/ui/section-heading'
+import { getContent } from '@/lib/queries'
+import { AdminContentClient } from '@/components/admin/content-editor'
 
-export default function ContentAdminPage() {
-  return (
-    <div className="rounded-[32px] bg-white p-8 shadow-[var(--shadow-soft)]">
-      <SectionHeading eyebrow="Admin" title="Content" body="This section is scaffolded and ready for Supabase-backed CRUD wiring or richer dashboard widgets." />
-    </div>
-  )
+export default async function ContentAdminPage() {
+  const content = await getContent()
+  return <AdminContentClient content={content} />
 }

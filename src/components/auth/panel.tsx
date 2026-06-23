@@ -67,6 +67,15 @@ export function AuthPanel() {
     }
   }
 
+  async function handleDevBypass() {
+    try {
+      await createSession('dev-admin-token')
+      window.location.href = next
+    } catch (err) {
+      setMessage('Failed to bypass auth')
+    }
+  }
+
   return (
     <div className="rounded-[32px] bg-white p-6 shadow-[var(--shadow-soft)] md:p-8">
       <div className="mb-6 flex gap-3">
@@ -81,7 +90,14 @@ export function AuthPanel() {
           <Button type="button" variant="secondary" onClick={handleGoogle}>Continue with Google</Button>
         </div>
       </form>
+      <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col gap-2">
+        <p className="text-xs text-muted/80">Testing locally? You can bypass authentication:</p>
+        <Button type="button" variant="accent" onClick={handleDevBypass} className="w-full">
+          Bypass with Dev Admin Account
+        </Button>
+      </div>
       {message ? <p className="mt-4 text-sm text-[var(--color-muted)]">{message}</p> : null}
     </div>
   )
 }
+

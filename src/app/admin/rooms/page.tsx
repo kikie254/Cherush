@@ -1,9 +1,7 @@
-import { SectionHeading } from '@/components/ui/section-heading'
+import { getRooms } from '@/lib/queries'
+import { AdminRoomsClient } from '@/components/admin/rooms-manager'
 
-export default function RoomsAdminPage() {
-  return (
-    <div className="rounded-[32px] bg-white p-8 shadow-[var(--shadow-soft)]">
-      <SectionHeading eyebrow="Admin" title="Rooms" body="This section is scaffolded and ready for Supabase-backed CRUD wiring or richer dashboard widgets." />
-    </div>
-  )
+export default async function RoomsAdminPage() {
+  const rooms = await getRooms()
+  return <AdminRoomsClient rooms={rooms} />
 }

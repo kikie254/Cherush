@@ -82,7 +82,7 @@ const mockBookings: Booking[] = [
     guests_count: 2,
     check_in: '2026-07-10',
     check_out: '2026-07-14',
-    total_amount: 38000,
+    total_amount: 4000,
     status: 'approved',
     special_requests: 'Late arrival',
     created_at: '2026-06-01T10:00:00.000Z',
