@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import { OptimizedImage } from '@/components/ui/image-loader'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import type { Room } from '@/types'
@@ -24,7 +24,7 @@ export function RoomEditorial({ room, index }: { room: Room, index: number }) {
     <div ref={containerRef} className="group relative grid lg:grid-cols-2 gap-12 lg:gap-24 items-center min-h-[80vh] py-20">
       <div className={`relative h-[60vh] lg:h-[80vh] w-full overflow-hidden rounded-[24px] ${!isEven ? 'lg:order-2' : ''}`}>
         <motion.div style={{ y }} className="absolute inset-0 h-[130%]">
-          <Image 
+          <OptimizedImage 
             src={room.cover_image} 
             alt={room.name} 
             fill 

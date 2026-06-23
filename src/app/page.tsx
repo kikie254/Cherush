@@ -5,6 +5,7 @@ import { Container } from '@/components/ui/container'
 import { SectionHeading } from '@/components/ui/section-heading'
 import { TrustBadges } from '@/components/home/trust-badges'
 import { WhyChooseUs } from '@/components/home/why-choose-us'
+import { LocalPartners } from '@/components/home/local-partners'
 import { DistanceCalculator } from '@/components/ui/distance-calculator'
 import { FAQSection } from '@/components/home/faq-section'
 import { FloatingActions } from '@/components/home/floating-actions'
@@ -49,6 +50,8 @@ export default async function HomePage() {
 
       {/* Why Choose Us */}
       <WhyChooseUs />
+
+      <LocalPartners />
 
       <HorizontalExperience />
 

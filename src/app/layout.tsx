@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Cormorant_Garamond, Inter, Space_Grotesk } from 'next/font/google'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { AppProviders } from '@/components/providers/app-providers'
@@ -29,10 +30,14 @@ export const metadata: Metadata = {
   }
 }
 
+const cormorant = Cormorant_Garamond({ subsets: ['latin'], variable: '--font-display', weight: ['400','500','600','700'], display: 'swap' })
+const inter = Inter({ subsets: ['latin'], variable: '--font-body', display: 'swap' })
+const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-mono', display: 'swap' })
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen">
+      <body className={`${cormorant.variable} ${inter.variable} ${spaceGrotesk.variable} font-body min-h-screen`}>
         <SmoothScroll>
           <AppProviders>
             <div className="flex min-h-screen flex-col">

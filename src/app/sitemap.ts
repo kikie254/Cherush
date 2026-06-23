@@ -10,12 +10,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/bookings',
     '/about',
     '/contact',
-    '/airbnb-iten-kenya',
-    '/guesthouse-in-iten',
-    '/accommodation-in-iten',
     '/athlete-stay-iten',
     '/monthly-stays-iten',
-    '/stay-in-iten',
   ]
   return routes.map((route) => ({ url: absoluteUrl(route), lastModified: new Date() }))
 }

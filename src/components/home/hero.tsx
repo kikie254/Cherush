@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import { OptimizedImage } from '@/components/ui/image-loader'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Container } from '@/components/ui/container'
 import { Button } from '@/components/ui/button'
@@ -16,7 +16,7 @@ export function Hero({ image }: { image: string }) {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"])
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
 
-  const headline = "Stay where mornings begin differently.".split(" ")
+  const headline = "Wake up where champions begin.".split(" ")
 
   return (
     <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-primary flex items-end">
@@ -27,7 +27,7 @@ export function Hero({ image }: { image: string }) {
           transition={{ duration: 6, ease: "easeOut" }}
           className="absolute inset-0"
         >
-          <Image 
+          <OptimizedImage 
             src={image} 
             alt="Cherush Stay Iten hero" 
             fill 
@@ -77,7 +77,7 @@ export function Hero({ image }: { image: string }) {
             transition={{ duration: 0.8, delay: 1.4, ease: [0.16, 1, 0.3, 1] }}
             className="mt-8 max-w-xl text-lg md:text-xl leading-relaxed text-white/80 font-light"
           >
-            Boutique stays in Iten designed for athletes, explorers and peaceful escapes.
+            Premium boutique stays in Iten for athletes, remote workers, and quiet escapes.
           </motion.p>
           
           <motion.div 

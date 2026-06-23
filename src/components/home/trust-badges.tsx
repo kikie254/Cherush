@@ -1,10 +1,9 @@
-import { Award, Wifi, ShieldCheck, HeartHandshake, CheckCircle } from 'lucide-react'
+import { MapPin, Wifi, Shield } from 'lucide-react'
 
 const BADGES = [
-  { icon: Award, title: 'Guest Promises', desc: 'Guaranteed comfort & privacy' },
-  { icon: ShieldCheck, title: 'Cleaning Standards', desc: 'Rigorous deep cleaning protocols' },
-  { icon: HeartHandshake, title: 'Local Experience', desc: 'Curated connections & itineraries' },
-  { icon: CheckCircle, title: 'Rapid Response', desc: 'Under 1 hour host response time' },
+  { icon: Wifi, title: "Fiber WiFi", desc: "High-speed internet for remote work" },
+  { icon: Shield, title: "Secure 24/7", desc: "Gated compound with security" },
+  { icon: MapPin, title: "5 mins to Stadium", desc: "Walking distance to Kamariny Track" }
 ]
 
 export function TrustBadges() {

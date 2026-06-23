@@ -1,15 +1,23 @@
 import type { Attraction, ContentBlock, GalleryItem, PricingRule, Review, Room, SiteSetting } from '@/types'
 
 export const images = {
-  hero: '/hero.svg',
-  lounge: '/lounge.svg',
-  workspace: '/workspace.svg',
-  desk: '/desk.svg',
-  trail: '/trail.svg',
-  sunrise: '/sunrise.svg',
-  garden: '/garden.svg',
-  patio: '/patio.svg',
-  safari: '/safari.svg'
+  hero: '/images/hero/cherush-exterior-sunrise-hero.webp',
+  heroAlt: '/images/hero/cherush-exterior-golden-hour.webp',
+  bedroom: '/images/rooms/cherush-bedroom-morning-light-01.webp',
+  bedroomAlt: '/images/rooms/cherush-bedroom-wide-angle.webp',
+  livingRoom: '/images/rooms/cherush-living-room-wide-angle.webp',
+  livingRoomAlt: '/images/rooms/cherush-living-room-cozy.webp',
+  bathroom: '/images/bathroom/cherush-bathroom-clean-modern.webp',
+  bathroomAlt: '/images/bathroom/cherush-bathroom-shower.webp',
+  kitchen: '/images/kitchen/cherush-kitchen-full-setup.webp',
+  kitchenAlt: '/images/kitchen/cherush-kitchen-dining.webp',
+  workspace: '/images/workspace/cherush-workspace-desk-setup.webp',
+  workspaceAlt: '/images/workspace/cherush-workspace-window-view.webp',
+  garden: '/images/exterior/cherush-garden-view.webp',
+  gardenAlt: '/images/exterior/cherush-entrance.webp',
+  exterior: '/images/exterior/cherush-building-front.webp',
+  lifestyle: '/images/lifestyle/cherush-coffee-morning.webp',
+  lifestyleAlt: '/images/lifestyle/cherush-athlete-training.webp',
 }
 
 export const seedRooms: Room[] = [
@@ -23,8 +31,8 @@ export const seedRooms: Room[] = [
     price_per_night: 1000,
     weekly_rate: 6000,
     monthly_rate: 22000,
-    cover_image: images.lounge,
-    gallery: [images.lounge, images.garden],
+    cover_image: images.livingRoom,
+    gallery: [images.livingRoom, images.garden],
     max_guests: 2,
     size_sqm: 34,
     beds: '1 king bed',
@@ -43,7 +51,7 @@ export const seedRooms: Room[] = [
     weekly_rate: 9000,
     monthly_rate: 32000,
     cover_image: images.workspace,
-    gallery: [images.workspace, images.desk],
+    gallery: [images.workspace, images.workspaceAlt],
     max_guests: 4,
     size_sqm: 56,
     beds: '1 queen bed + lounge sofa',
@@ -61,8 +69,8 @@ export const seedRooms: Room[] = [
     price_per_night: 2500,
     weekly_rate: 15000,
     monthly_rate: 50000,
-    cover_image: images.patio,
-    gallery: [images.patio, images.trail],
+    cover_image: images.garden,
+    gallery: [images.garden, images.lifestyleAlt],
     max_guests: 5,
     size_sqm: 72,
     beds: '2 bedrooms + daybed',
@@ -92,12 +100,12 @@ export const seedReviews: Review[] = [
 ]
 
 export const seedGallery: GalleryItem[] = [
-  { id: 'g1', title: 'Sunlit lounge', media_type: 'image', media_url: images.lounge, thumbnail_url: null, category: 'Rooms', featured: true, sort_order: 1 },
+  { id: 'g1', title: 'Sunlit lounge', media_type: 'image', media_url: images.livingRoom, thumbnail_url: null, category: 'Rooms', featured: true, sort_order: 1 },
   { id: 'g2', title: 'Garden arrival', media_type: 'image', media_url: images.garden, thumbnail_url: null, category: 'Stay', featured: true, sort_order: 2 },
   { id: 'g3', title: 'Workspace', media_type: 'image', media_url: images.workspace, thumbnail_url: null, category: 'Work', featured: true, sort_order: 3 },
-  { id: 'g4', title: 'Morning trail', media_type: 'image', media_url: images.trail, thumbnail_url: null, category: 'Training', featured: true, sort_order: 4 },
-  { id: 'g5', title: 'Valley sunrise', media_type: 'image', media_url: images.sunrise, thumbnail_url: null, category: 'Explore', featured: true, sort_order: 5 },
-  { id: 'g6', title: 'Safari day trip', media_type: 'image', media_url: images.safari, thumbnail_url: null, category: 'Explore', featured: true, sort_order: 6 }
+  { id: 'g4', title: 'Morning trail', media_type: 'image', media_url: images.lifestyleAlt, thumbnail_url: null, category: 'Training', featured: true, sort_order: 4 },
+  { id: 'g5', title: 'Valley sunrise', media_type: 'image', media_url: images.hero, thumbnail_url: null, category: 'Explore', featured: true, sort_order: 5 },
+  { id: 'g6', title: 'Safari day trip', media_type: 'image', media_url: images.exterior, thumbnail_url: null, category: 'Explore', featured: true, sort_order: 6 }
 ]
 
 export const seedPricing: PricingRule[] = [
