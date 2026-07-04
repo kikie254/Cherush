@@ -4,7 +4,7 @@ import { getRooms, getPricing } from '@/lib/queries'
 import { quoteBooking } from '@/lib/availability'
 import { guardRateLimit } from '@/lib/rate-limit'
 import { sendBookingEmails } from '@/lib/email'
-import { adminDb } from '@/lib/firebase/admin'
+import { createClient } from '@/lib/supabase/server'
 import type { Booking } from '@/types'
 
 export async function POST(request: Request) {
@@ -41,9 +41,16 @@ export async function POST(request: Request) {
     rooms: { name: room.name },
   }
 
-  // Persist to Firestore if configured
-  if (adminDb) {
-    await adminDb.collection('bookings').doc(booking.id).set(booking)
+  // Persist to Supabase
+  try {
+    const supabase = await createClient()
+    const { error } = await supabase.from('bookings').insert({
+      ...booking,
+      rooms: undefined, // joined column — not a physical column
+    })
+    if (error) console.error('[bookings/route] Supabase insert error:', error.message)
+  } catch (err) {
+    console.error('[bookings/route] Failed to persist booking:', err)
   }
 
   await sendBookingEmails(booking, room)

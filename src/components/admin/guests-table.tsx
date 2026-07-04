@@ -71,7 +71,7 @@ export function AdminGuestsClient({ bookings }: { bookings: Booking[] }) {
 
       <div className="bg-white/40 backdrop-blur-3xl p-8 rounded-[32px] shadow-premium border border-white/50 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <SectionHeading eyebrow="Admin" title="Guests" body={null} />
+          <SectionHeading eyebrow="Admin" title="Guests" body={undefined} />
           <div className="flex gap-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />

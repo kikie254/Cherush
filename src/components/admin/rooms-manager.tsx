@@ -43,7 +43,7 @@ export function AdminRoomsClient({ rooms: initial }: { rooms: Room[] }) {
     <div className="space-y-8 pb-20">
       <div className="bg-white/40 backdrop-blur-3xl p-8 rounded-[32px] shadow-premium border border-white/50">
         <div className="flex items-start justify-between mb-8">
-          <SectionHeading eyebrow="Admin" title="Rooms" body={null} />
+          <SectionHeading eyebrow="Admin" title="Rooms" body={undefined} />
           <button
             onClick={() => setEditing(BLANK_ROOM)}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm rounded-xl hover:bg-primary/90 transition-colors"

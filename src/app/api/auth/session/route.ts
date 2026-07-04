@@ -1,36 +1,34 @@
 import { NextResponse } from 'next/server'
-import { adminAuth } from '@/lib/firebase/admin'
+import { createClient } from '@/lib/supabase/server'
 
-// 5-day session
-const SESSION_DURATION_MS = 60 * 60 * 24 * 5 * 1000
-
+/**
+ * POST /api/auth/session
+ * Sign in with email + password via Supabase Auth.
+ * Body: { email: string; password: string }
+ */
 export async function POST(request: Request) {
-  if (!adminAuth) {
-    return NextResponse.json({ error: 'Firebase Admin not configured.' }, { status: 503 })
-  }
-
   try {
-    const { idToken } = await request.json()
-    const sessionCookie = await adminAuth.createSessionCookie(idToken, {
-      expiresIn: SESSION_DURATION_MS,
-    })
+    const { email, password } = await request.json()
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Email and password are required.' }, { status: 400 })
+    }
 
-    const response = NextResponse.json({ ok: true })
-    response.cookies.set('__session', sessionCookie, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: SESSION_DURATION_MS / 1000,
-      path: '/',
-    })
-    return response
+    const supabase = await createClient()
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) return NextResponse.json({ error: error.message }, { status: 401 })
+
+    return NextResponse.json({ ok: true })
   } catch {
-    return NextResponse.json({ error: 'Invalid ID token.' }, { status: 401 })
+    return NextResponse.json({ error: 'Sign-in failed.' }, { status: 500 })
   }
 }
 
+/**
+ * DELETE /api/auth/session
+ * Signs out the current user.
+ */
 export async function DELETE() {
-  const response = NextResponse.json({ ok: true })
-  response.cookies.set('__session', '', { maxAge: 0, path: '/' })
-  return response
+  const supabase = await createClient()
+  await supabase.auth.signOut()
+  return NextResponse.json({ ok: true })
 }

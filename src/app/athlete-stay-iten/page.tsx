@@ -78,7 +78,7 @@ export default async function AthleteStayPage() {
       rooms={rooms}
       faqs={faqs}
       targetKeyword="athlete accommodation iten"
-      heroImage={images.trail}
+      heroImage={images.lifestyleAlt}
     />
   )
 }

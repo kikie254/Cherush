@@ -77,7 +77,7 @@ export default async function MonthlyStaysPage() {
       rooms={rooms}
       faqs={faqs}
       targetKeyword="monthly stays iten"
-      heroImage={images.desk}
+      heroImage={images.workspace}
     />
   )
 }

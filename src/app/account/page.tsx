@@ -11,7 +11,7 @@ export default async function AccountPage() {
     <section className="py-20">
       <Container className="space-y-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <SectionHeading eyebrow="Account" title="Guest booking history" body="Connect Firebase to display real user-specific stays. Seed data shown below." />
+          <SectionHeading eyebrow="Account" title="Guest booking history" body="Connect Supabase to display real user-specific stays. Seed data shown below." />
           <SignOutButton />
         </div>
         <div className="grid gap-5">

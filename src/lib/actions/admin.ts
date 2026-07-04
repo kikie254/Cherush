@@ -1,6 +1,6 @@
 'use server'
 
-import { adminDb } from '@/lib/firebase/admin'
+import { createClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/auth'
 import type { Booking, BookingStatus, ContentBlock, GalleryItem, PricingRule, Room, SiteSetting } from '@/types'
 
@@ -22,14 +22,13 @@ async function guardAdmin(): Promise<Result | null> {
 export async function upsertRoom(data: Partial<Room> & { id?: string }): Promise<Result> {
   const guard = await guardAdmin()
   if (guard) return guard
-  if (!adminDb) return { ok: false, error: 'Firebase Admin not configured.' }
 
-  const { id, ...fields } = data
-  if (id) {
-    await adminDb.collection('rooms').doc(id).set(fields, { merge: true })
-  } else {
-    await adminDb.collection('rooms').add(fields)
-  }
+  const supabase = await createClient()
+  const { error } = data.id
+    ? await supabase.from('rooms').update(data).eq('id', data.id)
+    : await supabase.from('rooms').insert(data)
+
+  if (error) return { ok: false, error: error.message }
   return { ok: true }
 }
 
@@ -40,14 +39,13 @@ export async function upsertRoom(data: Partial<Room> & { id?: string }): Promise
 export async function upsertPricingRule(data: Partial<PricingRule> & { id?: string }): Promise<Result> {
   const guard = await guardAdmin()
   if (guard) return guard
-  if (!adminDb) return { ok: false, error: 'Firebase Admin not configured.' }
 
-  const { id, ...fields } = data
-  if (id) {
-    await adminDb.collection('pricing_rules').doc(id).set(fields, { merge: true })
-  } else {
-    await adminDb.collection('pricing_rules').add(fields)
-  }
+  const supabase = await createClient()
+  const { error } = data.id
+    ? await supabase.from('pricing_rules').update(data).eq('id', data.id)
+    : await supabase.from('pricing_rules').insert(data)
+
+  if (error) return { ok: false, error: error.message }
   return { ok: true }
 }
 
@@ -58,14 +56,13 @@ export async function upsertPricingRule(data: Partial<PricingRule> & { id?: stri
 export async function upsertContentBlock(data: Partial<ContentBlock> & { id?: string }): Promise<Result> {
   const guard = await guardAdmin()
   if (guard) return guard
-  if (!adminDb) return { ok: false, error: 'Firebase Admin not configured.' }
 
-  const { id, ...fields } = data
-  if (id) {
-    await adminDb.collection('content').doc(id).set(fields, { merge: true })
-  } else {
-    await adminDb.collection('content').add(fields)
-  }
+  const supabase = await createClient()
+  const { error } = data.id
+    ? await supabase.from('content').update(data).eq('id', data.id)
+    : await supabase.from('content').insert(data)
+
+  if (error) return { ok: false, error: error.message }
   return { ok: true }
 }
 
@@ -76,14 +73,13 @@ export async function upsertContentBlock(data: Partial<ContentBlock> & { id?: st
 export async function upsertGalleryItem(data: Partial<GalleryItem> & { id?: string }): Promise<Result> {
   const guard = await guardAdmin()
   if (guard) return guard
-  if (!adminDb) return { ok: false, error: 'Firebase Admin not configured.' }
 
-  const { id, ...fields } = data
-  if (id) {
-    await adminDb.collection('gallery').doc(id).set(fields, { merge: true })
-  } else {
-    await adminDb.collection('gallery').add(fields)
-  }
+  const supabase = await createClient()
+  const { error } = data.id
+    ? await supabase.from('gallery').update(data).eq('id', data.id)
+    : await supabase.from('gallery').insert(data)
+
+  if (error) return { ok: false, error: error.message }
   return { ok: true }
 }
 
@@ -94,14 +90,13 @@ export async function upsertGalleryItem(data: Partial<GalleryItem> & { id?: stri
 export async function upsertSiteSetting(data: Partial<SiteSetting> & { id?: string }): Promise<Result> {
   const guard = await guardAdmin()
   if (guard) return guard
-  if (!adminDb) return { ok: false, error: 'Firebase Admin not configured.' }
 
-  const { id, ...fields } = data
-  if (id) {
-    await adminDb.collection('site_settings').doc(id).set(fields, { merge: true })
-  } else {
-    await adminDb.collection('site_settings').add(fields)
-  }
+  const supabase = await createClient()
+  const { error } = data.id
+    ? await supabase.from('site_settings').update(data).eq('id', data.id)
+    : await supabase.from('site_settings').insert(data)
+
+  if (error) return { ok: false, error: error.message }
   return { ok: true }
 }
 
@@ -112,16 +107,17 @@ export async function upsertSiteSetting(data: Partial<SiteSetting> & { id?: stri
 export async function updateBookingStatus(id: string, status: BookingStatus): Promise<Result> {
   const guard = await guardAdmin()
   if (guard) return guard
-  if (!adminDb) return { ok: false, error: 'Firebase Admin not configured.' }
 
-  await adminDb.collection('bookings').doc(id).update({ status })
-  
+  const supabase = await createClient()
+  const { error } = await supabase.from('bookings').update({ status }).eq('id', id)
+  if (error) return { ok: false, error: error.message }
+
+  // Send status email
   try {
-    const doc = await adminDb.collection('bookings').doc(id).get()
-    const data = doc.data() as Booking
-    if (data) {
+    const { data: rows } = await supabase.from('bookings').select('*').eq('id', id).single()
+    if (rows) {
       const { sendStatusEmail } = await import('@/lib/email')
-      await sendStatusEmail(data, status)
+      await sendStatusEmail(rows as Booking, status)
     }
   } catch (e) {
     console.error('Failed to send status email', e)
@@ -133,8 +129,9 @@ export async function updateBookingStatus(id: string, status: BookingStatus): Pr
 export async function deleteBooking(id: string): Promise<Result> {
   const guard = await guardAdmin()
   if (guard) return guard
-  if (!adminDb) return { ok: false, error: 'Firebase Admin not configured.' }
 
-  await adminDb.collection('bookings').doc(id).delete()
+  const supabase = await createClient()
+  const { error } = await supabase.from('bookings').delete().eq('id', id)
+  if (error) return { ok: false, error: error.message }
   return { ok: true }
 }

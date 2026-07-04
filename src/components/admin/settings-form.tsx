@@ -61,7 +61,7 @@ export function AdminSettingsClient({ settings: initial }: { settings: SiteSetti
 
         {settings.length === 0 && (
           <div className="text-center py-12 text-muted">
-            No site settings found. Settings will appear here once Firebase is configured.
+            No site settings found. Settings will appear here once Supabase is configured.
           </div>
         )}
       </div>

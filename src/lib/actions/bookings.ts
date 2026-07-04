@@ -1,6 +1,6 @@
 'use server'
 
-import { adminDb } from '@/lib/firebase/admin'
+import { createClient } from '@/lib/supabase/server'
 import nodemailer from 'nodemailer'
 import { formatCurrency } from '@/lib/utils'
 
@@ -19,20 +19,16 @@ export async function cancelBookingByCode(code: string): Promise<Result> {
   if (!code) return { ok: false, error: 'Booking code is required.' }
 
   try {
+    const supabase = await createClient()
+
     // Find booking with this code
-    const snap = await adminDb.collection('bookings').get()
-    let bookingDocId = ''
-    let bookingData: any = null
+    const { data: bookingData, error: findError } = await supabase
+      .from('bookings')
+      .select('*')
+      .eq('booking_code', code)
+      .single()
 
-    snap.docs.forEach((doc: any) => {
-      const data = doc.data()
-      if (data.booking_code === code) {
-        bookingDocId = doc.id
-        bookingData = data
-      }
-    })
-
-    if (!bookingDocId || !bookingData) {
+    if (findError || !bookingData) {
       return { ok: false, error: 'Booking request not found.' }
     }
 
@@ -41,7 +37,12 @@ export async function cancelBookingByCode(code: string): Promise<Result> {
     }
 
     // Update status to cancelled
-    await adminDb.collection('bookings').doc(bookingDocId).update({ status: 'cancelled' })
+    const { error: updateError } = await supabase
+      .from('bookings')
+      .update({ status: 'cancelled' })
+      .eq('id', bookingData.id)
+
+    if (updateError) return { ok: false, error: updateError.message }
 
     // Send cancellation emails
     const transport = getTransport()
@@ -54,7 +55,7 @@ export async function cancelBookingByCode(code: string): Promise<Result> {
         `Check in: ${bookingData.check_in}`,
         `Check out: ${bookingData.check_out}`,
         `Total: ${formatCurrency(bookingData.total_amount)}`,
-        `Status: CANCELLED BY GUEST`
+        `Status: CANCELLED BY GUEST`,
       ].join('\n')
 
       await Promise.all([
@@ -62,14 +63,14 @@ export async function cancelBookingByCode(code: string): Promise<Result> {
           from,
           to: bookingData.guest_email,
           subject: `Booking Request Cancelled · ${bookingData.booking_code}`,
-          text: `Your reservation request at Cherush has been cancelled.\n\n${summary}`
+          text: `Your reservation request at Cherush has been cancelled.\n\n${summary}`,
         }),
         transport.sendMail({
           from,
           to: admin,
           subject: `Booking Request Cancelled by Guest · ${bookingData.booking_code}`,
-          text: `A guest has cancelled their booking request.\n\n${summary}\n\nGuest: ${bookingData.guest_name}\nEmail: ${bookingData.guest_email}`
-        })
+          text: `A guest has cancelled their booking request.\n\n${summary}\n\nGuest: ${bookingData.guest_name}\nEmail: ${bookingData.guest_email}`,
+        }),
       ])
     }
 

@@ -1,5 +1,5 @@
 import { cache } from 'react'
-import { adminDb } from '@/lib/firebase/admin'
+import { createClient } from '@/lib/supabase/server'
 import type { Booking, ContentBlock, GalleryItem, PricingRule, Review, Room, SiteSetting } from '@/types'
 import { attractions, faqs, seedContent, seedGallery, seedPricing, seedReviews, seedRooms, seedSettings } from '@/lib/site-data'
 
@@ -7,10 +7,19 @@ import { attractions, faqs, seedContent, seedGallery, seedPricing, seedReviews, 
 // Helpers
 // ---------------------------------------------------------------------------
 
-async function firestoreCollection<T>(collection: string): Promise<T[] | null> {
-  if (!adminDb) return null
-  const snap = await adminDb.collection(collection).get()
-  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as T[]
+async function supabaseSelect<T>(table: string): Promise<T[] | null> {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.from(table).select('*')
+    if (error) {
+      console.error(`[queries] Supabase error fetching ${table}:`, error.message)
+      return null
+    }
+    return (data as T[]) ?? null
+  } catch (err) {
+    console.error(`[queries] Failed to fetch ${table}:`, err)
+    return null
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -18,7 +27,7 @@ async function firestoreCollection<T>(collection: string): Promise<T[] | null> {
 // ---------------------------------------------------------------------------
 
 export const getRooms = cache(async (): Promise<Room[]> => {
-  const rows = await firestoreCollection<Room>('rooms')
+  const rows = await supabaseSelect<Room>('rooms')
   return rows && rows.length > 0 ? rows : seedRooms
 })
 
@@ -27,7 +36,7 @@ export const getRooms = cache(async (): Promise<Room[]> => {
 // ---------------------------------------------------------------------------
 
 export const getReviews = cache(async (): Promise<Review[]> => {
-  const rows = await firestoreCollection<Review>('reviews')
+  const rows = await supabaseSelect<Review>('reviews')
   return rows && rows.length > 0 ? rows : seedReviews
 })
 
@@ -36,7 +45,7 @@ export const getReviews = cache(async (): Promise<Review[]> => {
 // ---------------------------------------------------------------------------
 
 export const getGallery = cache(async (): Promise<GalleryItem[]> => {
-  const rows = await firestoreCollection<GalleryItem>('gallery')
+  const rows = await supabaseSelect<GalleryItem>('gallery')
   return rows && rows.length > 0 ? rows : seedGallery
 })
 
@@ -45,7 +54,7 @@ export const getGallery = cache(async (): Promise<GalleryItem[]> => {
 // ---------------------------------------------------------------------------
 
 export const getContent = cache(async (): Promise<ContentBlock[]> => {
-  const rows = await firestoreCollection<ContentBlock>('content')
+  const rows = await supabaseSelect<ContentBlock>('content')
   return rows && rows.length > 0 ? rows : seedContent
 })
 
@@ -54,7 +63,7 @@ export const getContent = cache(async (): Promise<ContentBlock[]> => {
 // ---------------------------------------------------------------------------
 
 export const getPricing = cache(async (): Promise<PricingRule[]> => {
-  const rows = await firestoreCollection<PricingRule>('pricing_rules')
+  const rows = await supabaseSelect<PricingRule>('pricing_rules')
   return rows && rows.length > 0 ? rows : seedPricing
 })
 
@@ -63,7 +72,7 @@ export const getPricing = cache(async (): Promise<PricingRule[]> => {
 // ---------------------------------------------------------------------------
 
 export const getSettings = cache(async (): Promise<SiteSetting[]> => {
-  const rows = await firestoreCollection<SiteSetting>('site_settings')
+  const rows = await supabaseSelect<SiteSetting>('site_settings')
   return rows && rows.length > 0 ? rows : seedSettings
 })
 
@@ -91,8 +100,20 @@ const mockBookings: Booking[] = [
 ]
 
 export const getBookings = cache(async (): Promise<Booking[]> => {
-  const rows = await firestoreCollection<Booking>('bookings')
-  return rows && rows.length > 0 ? rows : mockBookings
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('bookings')
+      .select('*, rooms(name)')
+      .order('created_at', { ascending: false })
+    if (error) {
+      console.error('[queries] Supabase error fetching bookings:', error.message)
+      return mockBookings
+    }
+    return data && data.length > 0 ? (data as Booking[]) : mockBookings
+  } catch {
+    return mockBookings
+  }
 })
 
 // ---------------------------------------------------------------------------
