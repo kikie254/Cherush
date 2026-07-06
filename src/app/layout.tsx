@@ -142,7 +142,6 @@ export default function RootLayout({
               contactPoint: [
                 {
                   '@type': 'ContactPoint',
-                  telephone: siteConfig.phone,
                   contactType: 'customer service',
                   availableLanguage: ['English', 'Swahili'],
                 },

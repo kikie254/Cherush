@@ -8,7 +8,7 @@ interface MetadataProps {
   path: string
   noindex?: boolean
   ogImage?: string
-  ogType?: 'website' | 'article'
+  ogType?: 'website' | 'article' | 'profile' | 'place'
 }
 
 export function getMetadata({
@@ -34,6 +34,9 @@ export function getMetadata({
       googleBot: {
         index: !noindex,
         follow: !noindex,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
       },
     },
     openGraph: {
@@ -62,24 +65,61 @@ export function getMetadata({
 }
 
 // ---------------------------------------------------------------------------
-// JSON-LD Structured Data Generators
+// Advanced JSON-LD Structured Data Generators (Phase 6)
 // ---------------------------------------------------------------------------
+
+export function getOrganizationSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': absoluteUrl('#organization'),
+    'name': siteConfig.name,
+    'url': absoluteUrl('/'),
+    'logo': absoluteUrl('/logo.png'),
+    'contactPoint': [
+      {
+        '@type': 'ContactPoint',
+        'contactType': 'customer service',
+        'availableLanguage': ['English', 'Swahili']
+      }
+    ],
+    'sameAs': [
+      siteConfig.social.instagram,
+      siteConfig.social.whatsapp
+    ]
+  }
+}
+
+export function getWebSiteSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': absoluteUrl('#website'),
+    'url': absoluteUrl('/'),
+    'name': siteConfig.name,
+    'description': siteConfig.description,
+    'potentialAction': {
+      '@type': 'SearchAction',
+      'target': absoluteUrl('/rooms?search={search_term_string}'),
+      'query-input': 'required name=search_term_string'
+    }
+  }
+}
 
 export function getLodgingBusinessSchema() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'LodgingBusiness',
+    '@type': ['LodgingBusiness', 'Hotel', 'LocalBusiness'],
     '@id': absoluteUrl('#lodging'),
-    'name': siteConfig.name,
+    'name': 'Cherush Guest House',
     'description': siteConfig.description,
     'url': absoluteUrl('/'),
-    'telephone': siteConfig.phone,
     'email': siteConfig.email,
     'address': {
       '@type': 'PostalAddress',
       'streetAddress': 'Iten-Kabarnet Road',
       'addressLocality': 'Iten',
-      'addressRegion': 'Elgeyo-Marakwet County',
+      'addressRegion': 'Elgeyo Marakwet County',
       'addressCountry': 'KE'
     },
     'geo': {
@@ -87,24 +127,25 @@ export function getLodgingBusinessSchema() {
       'latitude': siteConfig.coordinates.lat,
       'longitude': siteConfig.coordinates.lng
     },
-    'priceRange': 'KES 1,000 - 2,500',
+    'priceRange': '$$',
     'image': absoluteUrl('/hero.svg'),
     'amenityFeature': [
-      { '@type': 'LocationFeatureSpecification', 'name': 'Kitchenette', 'value': true },
-      { '@type': 'LocationFeatureSpecification', 'name': 'High-speed Fiber WiFi', 'value': true },
-      { '@type': 'LocationFeatureSpecification', 'name': 'Hot shower', 'value': true },
-      { '@type': 'LocationFeatureSpecification', 'name': 'Private Workspace', 'value': true },
-      { '@type': 'LocationFeatureSpecification', 'name': 'Secure parking', 'value': true }
-    ],
-    'starRating': {
-      '@type': 'Rating',
-      'ratingValue': '4.9',
-      'bestRating': '5'
-    }
+      { '@type': 'LocationFeatureSpecification', 'name': 'Parking', 'value': true },
+      { '@type': 'LocationFeatureSpecification', 'name': 'WiFi', 'value': true },
+      { '@type': 'LocationFeatureSpecification', 'name': 'Restaurant', 'value': true },
+      { '@type': 'LocationFeatureSpecification', 'name': 'Conference', 'value': true },
+      { '@type': 'LocationFeatureSpecification', 'name': 'Family Rooms', 'value': true },
+      { '@type': 'LocationFeatureSpecification', 'name': 'Breakfast', 'value': true },
+      { '@type': 'LocationFeatureSpecification', 'name': 'Garden', 'value': true },
+      { '@type': 'LocationFeatureSpecification', 'name': 'Laundry', 'value': true },
+      { '@type': 'LocationFeatureSpecification', 'name': 'Hot Shower', 'value': true },
+      { '@type': 'LocationFeatureSpecification', 'name': 'Security', 'value': true }
+    ]
   }
 }
 
 export function getFAQSchema(faqs: { question: string; answer: string }[]) {
+  if (!faqs || faqs.length === 0) return null
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -133,19 +174,20 @@ export function getBreadcrumbSchema(items: { name: string; item: string }[]) {
 }
 
 export function getReviewSchema(reviews: { guest_name: string; rating: number; quote: string }[]) {
+  if (!reviews || reviews.length === 0) return null
   return {
     '@context': 'https://schema.org',
     '@type': 'Review',
     'reviewRating': {
       '@type': 'Rating',
-      'ratingValue': '5',
+      'ratingValue': reviews[0].rating.toString(),
       'bestRating': '5'
     },
     'author': {
       '@type': 'Person',
-      'name': reviews[0]?.guest_name || 'Guest'
+      'name': reviews[0].guest_name
     },
-    'reviewBody': reviews[0]?.quote || 'Highly recommended!'
+    'reviewBody': reviews[0].quote
   }
 }
 
@@ -157,7 +199,7 @@ export function getOfferSchema(rooms: { name: string; price_per_night: number; s
     'itemListElement': rooms.map((room) => ({
       '@type': 'Offer',
       'itemOffered': {
-        '@type': 'Accommodation',
+        '@type': 'Room',
         'name': room.name,
         'url': absoluteUrl(`/rooms/${room.slug}`)
       },
@@ -168,5 +210,29 @@ export function getOfferSchema(rooms: { name: string; price_per_night: number; s
         'unitText': 'NIGHT'
       }
     }))
+  }
+}
+
+export function getSpeakableSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SpeakableSpecification',
+    'cssSelector': ['h1', '.prose p:first-of-type']
+  }
+}
+
+export function getTouristAttractionSchema(name: string, description: string, image: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'TouristAttraction',
+    'name': name,
+    'description': description,
+    'image': image,
+    'address': {
+      '@type': 'PostalAddress',
+      'addressLocality': 'Iten',
+      'addressRegion': 'Elgeyo Marakwet County',
+      'addressCountry': 'KE'
+    }
   }
 }

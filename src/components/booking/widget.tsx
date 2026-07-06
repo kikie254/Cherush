@@ -280,15 +280,26 @@ export function BookingWidget({ rooms, initialRoomSlug }: { rooms: Room[]; initi
               {data?.quote ? formatCurrency(data.quote.total) : '-'}
             </span>
           </div>
+
+          <div className="pt-4">
+            <input 
+              type="text" 
+              placeholder="Promo Code (Optional)" 
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-sm outline-none focus:border-premium" 
+            />
+            {data?.quote?.nights && data.quote.nights >= 7 && (
+              <p className="text-xs text-premium mt-2">✓ Long stay discount applied</p>
+            )}
+          </div>
           
           <div className="pt-8 mt-8 border-t border-white/10 space-y-4">
             <div className="flex items-center gap-3 text-white/90">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs">No payment required until confirmed</span>
+              <span className="text-xs">Instant email confirmation</span>
             </div>
             <div className="flex items-center gap-3 text-white/90">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs">Guaranteed secure booking process</span>
+              <span className="text-xs">WhatsApp booking reminders</span>
             </div>
             <div className="flex items-center gap-3 text-white/90">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
