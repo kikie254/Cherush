@@ -44,10 +44,28 @@ export async function getUser() {
 
 /**
  * Guards a route: redirects to /auth if not signed in.
+ * Also verifies the user has the 'admin' role in public.user_roles.
  */
 export async function requireAdmin() {
   const { redirect } = await import('next/navigation')
-  const user = await getUser()
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   if (!user) redirect('/auth?next=/admin')
-  return user
+
+  // At this point `user` is guaranteed non-null (redirect throws above).
+  // The `!` assertion satisfies TypeScript.
+  const { data: roleRow } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', user!.id)
+    .single()
+
+  if (!roleRow || roleRow.role !== 'admin') {
+    redirect('/auth?error=unauthorized&next=/admin')
+  }
+
+  return user!
 }

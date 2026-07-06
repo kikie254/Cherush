@@ -26,6 +26,7 @@ export type Review = {
   rating: number
   quote: string
   published: boolean
+  created_at: string
 }
 
 export type GalleryItem = {

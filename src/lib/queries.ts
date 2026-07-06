@@ -7,10 +7,24 @@ import { attractions, faqs, seedContent, seedGallery, seedPricing, seedReviews, 
 // Helpers
 // ---------------------------------------------------------------------------
 
-async function supabaseSelect<T>(table: string): Promise<T[] | null> {
+type OrderOpts = { column: string; ascending: boolean }
+
+async function supabaseSelect<T>(
+  table: string,
+  opts?: { order?: OrderOpts; filter?: Record<string, unknown> }
+): Promise<T[] | null> {
   try {
     const supabase = await createClient()
-    const { data, error } = await supabase.from(table).select('*')
+    let query = supabase.from(table).select('*')
+    if (opts?.filter) {
+      for (const [key, value] of Object.entries(opts.filter)) {
+        query = query.eq(key, value)
+      }
+    }
+    if (opts?.order) {
+      query = query.order(opts.order.column, { ascending: opts.order.ascending })
+    }
+    const { data, error } = await query
     if (error) {
       console.error(`[queries] Supabase error fetching ${table}:`, error.message)
       return null
@@ -27,16 +41,36 @@ async function supabaseSelect<T>(table: string): Promise<T[] | null> {
 // ---------------------------------------------------------------------------
 
 export const getRooms = cache(async (): Promise<Room[]> => {
-  const rows = await supabaseSelect<Room>('rooms')
+  const rows = await supabaseSelect<Room>('rooms', {
+    filter: { published: true },
+    order: { column: 'price_per_night', ascending: true },
+  })
+  return rows && rows.length > 0 ? rows : seedRooms
+})
+
+export const getAllRooms = cache(async (): Promise<Room[]> => {
+  const rows = await supabaseSelect<Room>('rooms', {
+    order: { column: 'price_per_night', ascending: true },
+  })
   return rows && rows.length > 0 ? rows : seedRooms
 })
 
 // ---------------------------------------------------------------------------
-// Reviews
+// Reviews — public (published only) vs admin (all)
 // ---------------------------------------------------------------------------
 
 export const getReviews = cache(async (): Promise<Review[]> => {
-  const rows = await supabaseSelect<Review>('reviews')
+  const rows = await supabaseSelect<Review>('reviews', {
+    filter: { published: true },
+    order: { column: 'created_at', ascending: false },
+  })
+  return rows && rows.length > 0 ? rows : seedReviews
+})
+
+export const getAdminReviews = cache(async (): Promise<Review[]> => {
+  const rows = await supabaseSelect<Review>('reviews', {
+    order: { column: 'created_at', ascending: false },
+  })
   return rows && rows.length > 0 ? rows : seedReviews
 })
 
@@ -45,7 +79,9 @@ export const getReviews = cache(async (): Promise<Review[]> => {
 // ---------------------------------------------------------------------------
 
 export const getGallery = cache(async (): Promise<GalleryItem[]> => {
-  const rows = await supabaseSelect<GalleryItem>('gallery')
+  const rows = await supabaseSelect<GalleryItem>('gallery', {
+    order: { column: 'sort_order', ascending: true },
+  })
   return rows && rows.length > 0 ? rows : seedGallery
 })
 
@@ -63,7 +99,9 @@ export const getContent = cache(async (): Promise<ContentBlock[]> => {
 // ---------------------------------------------------------------------------
 
 export const getPricing = cache(async (): Promise<PricingRule[]> => {
-  const rows = await supabaseSelect<PricingRule>('pricing_rules')
+  const rows = await supabaseSelect<PricingRule>('pricing_rules', {
+    order: { column: 'start_date', ascending: true },
+  })
   return rows && rows.length > 0 ? rows : seedPricing
 })
 
@@ -117,12 +155,43 @@ export const getBookings = cache(async (): Promise<Booking[]> => {
 })
 
 // ---------------------------------------------------------------------------
+// Contact messages (admin only)
+// ---------------------------------------------------------------------------
+
+type ContactMessage = {
+  id: string
+  name: string
+  email: string
+  subject: string
+  message: string
+  status: 'unread' | 'read' | 'replied'
+  created_at: string
+}
+
+export const getContactMessages = cache(async (): Promise<ContactMessage[]> => {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error) {
+      console.error('[queries] Supabase error fetching contact_messages:', error.message)
+      return []
+    }
+    return (data ?? []) as ContactMessage[]
+  } catch {
+    return []
+  }
+})
+
+// ---------------------------------------------------------------------------
 // Admin dashboard aggregate
 // ---------------------------------------------------------------------------
 
 export const getAdminData = cache(async () => {
   const [rooms, bookings, gallery, content, pricing, settings] = await Promise.all([
-    getRooms(),
+    getAllRooms(),
     getBookings(),
     getGallery(),
     getContent(),
@@ -134,10 +203,11 @@ export const getAdminData = cache(async () => {
     .filter((b) => ['approved', 'completed'].includes(b.status))
     .reduce((sum, b) => sum + b.total_amount, 0)
   const upcoming = bookings.filter((b) => b.status === 'approved').length
-  const pending = bookings.filter((b) => b.status === 'pending').length
+  const pending  = bookings.filter((b) => b.status === 'pending').length
   const occupancyRate = rooms.length ? Math.round((upcoming / rooms.length) * 100) : 0
 
   return { rooms, bookings, gallery, content, pricing, settings, stats: { revenue, upcoming, pending, occupancyRate } }
 })
 
 export { faqs, attractions }
+

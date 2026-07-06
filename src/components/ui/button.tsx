@@ -13,18 +13,18 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 }
 
 const variants = {
-  primary: 'bg-primary text-white border border-transparent',
+  primary:   'bg-primary text-white border border-transparent',
   secondary: 'bg-transparent text-primary border border-primary/20 hover:border-primary/40',
-  accent: 'bg-accent text-white border border-transparent',
-  premium: 'bg-premium text-white border border-transparent'
+  accent:    'bg-accent text-white border border-transparent',
+  premium:   'bg-premium text-white border border-transparent',
 }
 
-export function Button({ href, variant = 'primary', className, children, magnetic = true, ...props }: Props) {
+export function Button({ href, variant = 'primary', className, children, magnetic = true, disabled, ...props }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState({ x: 0, y: 0 })
 
   const handleMouse = (e: React.MouseEvent) => {
-    if (!magnetic || !ref.current) return
+    if (!magnetic || !ref.current || disabled) return
     const { clientX, clientY } = e
     const { height, width, left, top } = ref.current.getBoundingClientRect()
     const middleX = clientX - (left + width / 2)
@@ -32,40 +32,44 @@ export function Button({ href, variant = 'primary', className, children, magneti
     setPosition({ x: middleX * 0.2, y: middleY * 0.2 })
   }
 
-  const reset = () => {
-    setPosition({ x: 0, y: 0 })
-  }
+  const reset = () => setPosition({ x: 0, y: 0 })
 
   const classes = cn(
     'relative inline-flex items-center justify-center rounded-full px-8 py-4 text-sm font-medium tracking-wide transition-colors duration-500 overflow-hidden group',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent',
     variants[variant],
+    disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
     className
   )
 
   const innerContent = (
     <>
       <span className="relative z-10">{children}</span>
-      {/* Hover Background Sweep */}
-      <div className={cn(
-        "absolute inset-0 z-0 scale-y-0 rounded-full transition-transform duration-500 origin-bottom group-hover:scale-y-100",
-        variant === 'primary' ? "bg-black" : variant === 'secondary' ? "bg-primary/5" : variant === 'premium' ? "bg-black/10" : "bg-black/10"
-      )} />
+      {/* Hover sweep — hidden when disabled */}
+      {!disabled && (
+        <div className={cn(
+          'absolute inset-0 z-0 scale-y-0 rounded-full transition-transform duration-500 origin-bottom group-hover:scale-y-100',
+          variant === 'primary'   ? 'bg-black'      :
+          variant === 'secondary' ? 'bg-primary/5'  :
+          variant === 'premium'   ? 'bg-black/10'   : 'bg-black/10'
+        )} />
+      )}
     </>
   )
 
-  const Wrapper = ({ children }: { children: React.ReactNode }) => {
+  const Wrapper = ({ children: inner }: { children: React.ReactNode }) => {
     const shouldReduceMotion = useReducedMotion()
-    
+
     return (
       <motion.div
         ref={ref}
         onMouseMove={handleMouse}
         onMouseLeave={reset}
-        animate={shouldReduceMotion ? { x: 0, y: 0 } : { x: position.x, y: position.y }}
+        animate={shouldReduceMotion || disabled ? { x: 0, y: 0 } : { x: position.x, y: position.y }}
         transition={{ type: 'spring', stiffness: 300, damping: 20, mass: 0.5 }}
         className="inline-block"
       >
-        {children}
+        {inner}
       </motion.div>
     )
   }
@@ -73,7 +77,7 @@ export function Button({ href, variant = 'primary', className, children, magneti
   if (href) {
     return (
       <Wrapper>
-        <Link href={href} className={classes}>
+        <Link href={href} className={classes} aria-disabled={disabled}>
           {innerContent}
         </Link>
       </Wrapper>
@@ -82,9 +86,10 @@ export function Button({ href, variant = 'primary', className, children, magneti
 
   return (
     <Wrapper>
-      <button className={classes} {...props}>
+      <button className={classes} disabled={disabled} {...props}>
         {innerContent}
       </button>
     </Wrapper>
   )
 }
+

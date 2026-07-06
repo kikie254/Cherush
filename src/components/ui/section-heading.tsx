@@ -8,13 +8,15 @@ export function SectionHeading({
   title,
   body,
   center = false,
-  className
+  className,
+  id,
 }: {
   eyebrow: string
   title: string
   body?: string
   center?: boolean
   className?: string
+  id?: string
 }) {
   return (
     <div className={cn(center ? 'mx-auto max-w-3xl text-center flex flex-col items-center' : 'max-w-3xl', className)}>
@@ -30,7 +32,8 @@ export function SectionHeading({
         {!center && <span className="h-px w-8 bg-accent" />}
       </motion.div>
       
-      <motion.h2 
+      <motion.h2
+        id={id}
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-10%" }}
@@ -41,7 +44,7 @@ export function SectionHeading({
       </motion.h2>
       
       {body && (
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10%" }}
@@ -54,3 +57,4 @@ export function SectionHeading({
     </div>
   )
 }
+

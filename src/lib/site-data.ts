@@ -87,7 +87,8 @@ export const seedReviews: Review[] = [
     origin: 'Berlin',
     rating: 5,
     quote: 'Quiet mornings, excellent WiFi, and thoughtful hosting. It felt easy to train, work, and rest here.',
-    published: true
+    published: true,
+    created_at: '2026-05-01T10:00:00.000Z',
   },
   {
     id: 'r2',
@@ -95,8 +96,9 @@ export const seedReviews: Review[] = [
     origin: 'Nairobi',
     rating: 5,
     quote: 'The stay felt warm and polished. Great base for a family weekend and sunrise drives around the valley.',
-    published: true
-  }
+    published: true,
+    created_at: '2026-05-15T10:00:00.000Z',
+  },
 ]
 
 export const seedGallery: GalleryItem[] = [

@@ -25,6 +25,7 @@ export function BookingWidget({ rooms, initialRoomSlug }: { rooms: Room[]; initi
   
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [bookingCode, setBookingCode] = useState('')
   const [message, setMessage] = useState('')
 
   const room = useMemo(() => rooms.find((item) => item.id === roomId), [roomId, rooms])
@@ -64,6 +65,7 @@ export function BookingWidget({ rooms, initialRoomSlug }: { rooms: Room[]; initi
       if (result.error) {
         setMessage(result.error)
       } else {
+        setBookingCode(result.bookingCode ?? '')
         setSuccess(true)
       }
     } catch (err) {
@@ -73,8 +75,8 @@ export function BookingWidget({ rooms, initialRoomSlug }: { rooms: Room[]; initi
     }
   }
 
-  const InputLabel = ({ children, title }: { children: React.ReactNode, title: string }) => (
-    <label className="block space-y-3">
+  const InputLabel = ({ children, title, htmlFor }: { children: React.ReactNode, title: string, htmlFor?: string }) => (
+    <label htmlFor={htmlFor} className="block space-y-3">
       <span className="text-xs uppercase tracking-widest text-muted/70 font-medium">{title}</span>
       {children}
     </label>
@@ -120,19 +122,19 @@ export function BookingWidget({ rooms, initialRoomSlug }: { rooms: Room[]; initi
                     >
                       <h2 className="font-display text-4xl text-primary tracking-tight">Your stay details</h2>
                       <div className="grid gap-8 md:grid-cols-2">
-                        <InputLabel title="Room">
-                          <select value={roomId} onChange={(e) => setRoomId(e.target.value)} className={InputClass}>
+                        <InputLabel title="Room" htmlFor="bw-room">
+                          <select id="bw-room" value={roomId} onChange={(e) => setRoomId(e.target.value)} className={InputClass} aria-label="Select room">
                             {rooms.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
                           </select>
                         </InputLabel>
-                        <InputLabel title="Guests">
-                          <input type="number" min={1} max={8} value={guestsCount} onChange={(e) => setGuestsCount(Number(e.target.value))} className={InputClass} />
+                        <InputLabel title="Guests" htmlFor="bw-guests">
+                          <input id="bw-guests" type="number" min={1} max={room?.max_guests ?? 8} value={guestsCount} onChange={(e) => setGuestsCount(Number(e.target.value))} className={InputClass} aria-label="Number of guests" />
                         </InputLabel>
-                        <InputLabel title="Check-in">
-                          <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className={InputClass} />
+                        <InputLabel title="Check-in" htmlFor="bw-checkin">
+                          <input id="bw-checkin" type="date" value={checkIn} min={new Date().toISOString().slice(0,10)} onChange={(e) => setCheckIn(e.target.value)} className={InputClass} aria-label="Check-in date" />
                         </InputLabel>
-                        <InputLabel title="Check-out">
-                          <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} className={InputClass} />
+                        <InputLabel title="Check-out" htmlFor="bw-checkout">
+                          <input id="bw-checkout" type="date" value={checkOut} min={checkIn || new Date().toISOString().slice(0,10)} onChange={(e) => setCheckOut(e.target.value)} className={InputClass} aria-label="Check-out date" />
                         </InputLabel>
                       </div>
                       <div className="pt-4 flex justify-end">
@@ -159,20 +161,20 @@ export function BookingWidget({ rooms, initialRoomSlug }: { rooms: Room[]; initi
                       </div>
                       
                       <div className="grid gap-8 md:grid-cols-2">
-                        <InputLabel title="Full Name">
-                          <input name="guestName" required placeholder="Jane Doe" className={InputClass} />
+                        <InputLabel title="Full Name" htmlFor="bw-name">
+                          <input id="bw-name" name="guestName" required autoComplete="name" placeholder="Jane Doe" className={InputClass} aria-required="true" />
                         </InputLabel>
-                        <InputLabel title="Email Address">
-                          <input name="guestEmail" required type="email" placeholder="jane@example.com" className={InputClass} />
+                        <InputLabel title="Email Address" htmlFor="bw-email">
+                          <input id="bw-email" name="guestEmail" required type="email" autoComplete="email" placeholder="jane@example.com" className={InputClass} aria-required="true" />
                         </InputLabel>
                         <div className="md:col-span-2">
-                          <InputLabel title="Phone Number">
-                            <input name="guestPhone" required placeholder="+254 700 000 000" className={InputClass} />
+                          <InputLabel title="Phone Number" htmlFor="bw-phone">
+                            <input id="bw-phone" name="guestPhone" required type="tel" autoComplete="tel" placeholder="+254 700 000 000" className={InputClass} aria-required="true" />
                           </InputLabel>
                         </div>
                         <div className="md:col-span-2">
-                          <InputLabel title="Special Requests">
-                            <textarea name="specialRequests" rows={3} placeholder="Dietary requirements, arrival time, etc." className={InputClass} />
+                          <InputLabel title="Special Requests (optional)" htmlFor="bw-requests">
+                            <textarea id="bw-requests" name="specialRequests" rows={3} placeholder="Dietary requirements, arrival time, etc." className={InputClass} />
                           </InputLabel>
                         </div>
                       </div>
@@ -197,6 +199,8 @@ export function BookingWidget({ rooms, initialRoomSlug }: { rooms: Room[]; initi
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-primary p-10 md:p-16 rounded-[32px] text-white text-center flex flex-col items-center justify-center min-h-[500px]"
+            role="status"
+            aria-live="polite"
             >
               <motion.div
                 initial={{ scale: 0 }}
@@ -204,15 +208,29 @@ export function BookingWidget({ rooms, initialRoomSlug }: { rooms: Room[]; initi
                 transition={{ type: "spring", delay: 0.2 }}
                 className="w-20 h-20 bg-premium rounded-full flex items-center justify-center mb-8 text-primary"
               >
-                <CheckCircle2 className="w-10 h-10" />
+                <CheckCircle2 className="w-10 h-10" aria-hidden="true" />
               </motion.div>
-              <h2 className="font-display text-4xl md:text-5xl mb-6">Request Received</h2>
-              <p className="text-white/80 text-lg max-w-md mx-auto leading-relaxed mb-10">
-                Thank you for choosing Cherush. Our team will review your request and confirm availability shortly.
+              <h2 className="font-display text-4xl md:text-5xl mb-4">Request Received</h2>
+              {bookingCode && (
+                <div className="mb-6 bg-white/10 border border-white/20 rounded-2xl px-6 py-4">
+                  <p className="text-white/60 text-xs uppercase tracking-widest mb-1">Your Reference</p>
+                  <p className="font-mono text-2xl font-bold text-premium tracking-wider">{bookingCode}</p>
+                  <p className="text-white/60 text-xs mt-1">Save this code to track your booking</p>
+                </div>
+              )}
+              <p className="text-white/80 text-lg max-w-md mx-auto leading-relaxed mb-8">
+                Thank you for choosing Cherush. Our team will review your request and confirm availability shortly. A confirmation email has been sent.
               </p>
-              <Button href="/" variant="secondary" className="border-white/20 text-white hover:bg-white hover:text-primary">
-                Return Home
-              </Button>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {bookingCode && (
+                  <Button href={`/bookings/track?code=${bookingCode}`} variant="secondary" className="border-white/20 text-white hover:bg-white hover:text-primary">
+                    Track Booking
+                  </Button>
+                )}
+                <Button href="/" variant="secondary" className="border-white/20 text-white hover:bg-white hover:text-primary">
+                  Return Home
+                </Button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
