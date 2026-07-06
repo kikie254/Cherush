@@ -64,17 +64,6 @@ const nextConfig: NextConfig = {
     ]
   },
 
-  async redirects() {
-    return [
-      // Canonical redirect: www → non-www (handled by Vercel, but belt-and-braces)
-      {
-        source: '/:path*',
-        has: [{ type: 'host', value: 'www.cherushguesthouse.com' }],
-        destination: 'https://cherushguesthouse.com/:path*',
-        permanent: true,
-      },
-    ]
-  },
 }
 
 export default nextConfig
