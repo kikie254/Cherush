@@ -8,7 +8,7 @@ interface MetadataProps {
   path: string
   noindex?: boolean
   ogImage?: string
-  ogType?: 'website' | 'article' | 'profile' | 'place'
+  ogType?: 'website' | 'article' | 'profile'
 }
 
 export function getMetadata({

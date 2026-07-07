@@ -2,7 +2,7 @@ import { getMetadata, getBreadcrumbSchema } from '@/lib/seo'
 
 export const metadata = getMetadata({
   title: 'Our History | Cherush Guesthouse',
-  description: 'The story of how Cherush Guesthouse became Iten's premier accommodation choice.',
+  description: "The story of how Cherush Guesthouse became Iten's premier accommodation choice.",
   path: '/company-history',
 })
 
