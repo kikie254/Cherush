@@ -10,24 +10,33 @@ import { DistanceCalculator } from '@/components/ui/distance-calculator'
 import { FAQSection } from '@/components/home/faq-section'
 import { FloatingActions } from '@/components/home/floating-actions'
 import { TestimonialsCarousel } from '@/components/home/testimonials-carousel'
-import { getReviews, getRooms } from '@/lib/queries'
+import { getReviews, getRooms, faqs } from '@/lib/queries'
 import { images } from '@/lib/site-data'
-import { getLodgingBusinessSchema, getFAQSchema, getReviewSchema } from '@/lib/seo'
-import { faqs } from '@/lib/queries'
+import { getMetadata, getLodgingBusinessSchema, getFAQSchema, getReviewSchema } from '@/lib/seo'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: 'Cherush Guesthouse | Affordable Luxury Accommodation in Kenya',
+export const metadata: Metadata = getMetadata({
+  title: 'Cherush Guesthouse | Affordable Accommodation in Iten, Kenya',
   description:
-    'Experience comfort, hospitality and affordable luxury at Cherush Guesthouse. Book rooms online, explore amenities and enjoy exceptional service in Iten, Kenya.',
-  alternates: {
-    canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://cherushguesthouse.com',
-  },
-}
+    'Cherush Guesthouse offers comfortable, affordable rooms in Iten, Kenya — the Home of Champions. Book online for athlete stays, family visits, remote work, and tourism in the Great Rift Valley.',
+  path: '/',
+  keywords: [
+    'guesthouse Iten Kenya',
+    'affordable accommodation Iten',
+    'Cherush Guesthouse',
+    'hotel in Iten',
+    'places to stay Iten',
+    'athlete accommodation Iten',
+    'family guesthouse Iten Kenya',
+    'budget accommodation Iten',
+    'Home of Champions accommodation',
+    'Elgeyo Marakwet guesthouse',
+  ],
+})
 
-export const revalidate = 3600 // Cache for 1 hour
+export const revalidate = 3600
 
 export default async function HomePage() {
   const [rooms, reviews] = await Promise.all([getRooms(), getReviews()])
@@ -85,7 +94,7 @@ export default async function HomePage() {
           <SectionHeading
             eyebrow="Prime Proximity"
             title="Local travel and running trails distance guide"
-            body="Cherush Stay is located in a quiet residential pocket of Iten. Calculate distances and transit times to popular athletic and scenic hubs."
+            body="Cherush Guesthouse is located in a quiet residential pocket of Iten. Calculate distances and transit times to popular athletic and scenic hubs."
             id="proximity-heading"
           />
           <div className="mt-12">
@@ -94,7 +103,7 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Guest Reviews — now with carousel */}
+      {/* Guest Reviews */}
       <section className="py-32 bg-white relative overflow-hidden" aria-labelledby="reviews-heading">
         <Container>
           <div className="grid lg:grid-cols-2 gap-20 items-center">
@@ -112,7 +121,7 @@ export default async function HomePage() {
             <div className="relative h-[80vh] w-full rounded-[24px] overflow-hidden">
               <Image
                 src={images.garden}
-                alt="Cherush garden view"
+                alt="Cherush Guesthouse garden — Iten, Kenya"
                 fill
                 className="object-cover"
                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -132,7 +141,7 @@ export default async function HomePage() {
           <SectionHeading
             eyebrow="Your Journey Begins"
             title="Ready to experience Iten?"
-            body="Secure your dates for an upcoming training block, remote work stay, or family retreat."
+            body="Secure your dates for an upcoming training block, remote work stay, or family retreat at Cherush Guesthouse."
             center
             className="text-white [&_h2]:text-white [&_p]:text-white/80"
             id="cta-heading"

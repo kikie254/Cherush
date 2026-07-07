@@ -1,76 +1,65 @@
-import { getMetadata, getBreadcrumbSchema, getSpeakableSchema } from '@/lib/seo'
-import Image from 'next/image'
-import Link from 'next/link'
-import { CheckCircle2 } from 'lucide-react'
+import { getMetadata, getBreadcrumbSchema, getFAQSchema, getLodgingBusinessSchema } from '@/lib/seo'
+
+export const dynamic = 'force-dynamic'
+import { LandingPageTemplate } from '@/components/layout/landing-page-template'
+import { LocalKnowledgeBase } from '@/components/seo/local-knowledge-base'
+import { getRooms } from '@/lib/queries'
 
 export const metadata = getMetadata({
-  title: 'Athlete Accommodation in Iten | Cherush Guesthouse',
-  description: 'Tailored for elite runners: high-altitude recovery, nutritionist-approved meals, and close proximity to Kamariny track.',
+  title: 'Elite Athlete Accommodation in Iten, Kenya | Cherush',
+  description: 'Specialized athlete accommodation in Iten (2400m altitude). Close to Kamariny track, featuring fast WiFi, hot showers, and kitchens for strict diets.',
   path: '/athlete-accommodation',
+  keywords: [
+    'athlete accommodation Iten',
+    'runner accommodation Iten Kenya',
+    'altitude training camp Iten',
+    'running camps in Iten',
+    'hotels near Kamariny stadium',
+  ],
 })
 
-const breadcrumbs = getBreadcrumbSchema([
-  { name: 'Home', item: '/' },
-  { name: 'Athlete Accommodation in Iten', item: '/athlete-accommodation' }
-])
+const faqs = [
+  { question: 'How close is the accommodation to the running trails?', answer: 'Cherush Guesthouse is situated mere minutes away from the famous red dirt trails of Iten. You can literally step out of our gate and begin your morning run immediately.' },
+  { question: 'Are there facilities for ice baths or recovery?', answer: 'We offer 24/7 hot and cold showers, and our spacious bathrooms can accommodate portable ice baths if you bring them. Our serene garden provides the perfect space for stretching, yoga, and foam rolling.' },
+  { question: 'Can I cook my own meals for my specific diet?', answer: 'Yes, every room features a self-catering kitchenette. We understand elite athletes require precise macros, so you have full control over your nutrition.' },
+  { question: 'Is the compound secure for my expensive gear?', answer: 'Absolutely. We have a fully walled compound, a secure gate, and 24-hour personnel. Your running watches, laptops, and gear are completely safe.' }
+]
 
-export default function Page() {
+export default async function AthleteAccommodationPage() {
+  const rooms = await getRooms()
+  const athleteRooms = rooms.slice(0, 3) // Typically singles or specific athlete-friendly rooms
+
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getSpeakableSchema()) }} />
-      
-      <article className="min-h-screen bg-background">
-        {/* Hero */}
-        <section className="relative h-[60vh] flex items-center justify-center">
-          <Image src="https://images.unsplash.com/photo-1542401886-65d6c61db217?auto=format&fit=crop&q=80&w=2000" alt="Specialized Athlete Accommodation in Iten" fill className="object-cover brightness-50" priority />
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 className="font-display text-4xl md:text-6xl font-bold text-white mb-6">Specialized Athlete Accommodation in Iten</h1>
-            <p className="text-xl text-white/90 font-light max-w-2xl mx-auto">Tailored for elite runners: high-altitude recovery, nutritionist-approved meals, and close proximity to Kamariny track.</p>
-            <div className="mt-8 flex justify-center gap-4">
-              <Link href="/bookings" className="px-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors">Book Now</Link>
-              <Link href="/contact" className="px-8 py-3 bg-white/10 text-white border border-white/20 rounded-md font-medium hover:bg-white/20 transition-colors">Contact Us</Link>
-            </div>
-          </div>
-        </section>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Athlete Accommodation', item: '/athlete-accommodation' }])) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getLodgingBusinessSchema()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getFAQSchema(faqs)) }} />
 
-        <section className="py-20 px-4 max-w-5xl mx-auto">
-          {/* AI Search Answer Block */}
-          <div className="bg-accent/10 border-l-4 border-accent p-6 rounded-r-xl mb-12">
-            <h2 className="text-xl font-bold text-primary mb-2">Why Choose Cherush for Athlete Accommodation?</h2>
-            <p className="text-text/80 leading-relaxed">
-              Located in the heart of Iten, Kenya (The Home of Champions), Cherush Guesthouse offers specialized amenities tailored specifically for your needs. Whether you require high-speed fiber internet for remote work, specialized athlete nutrition, or secure environments for your family, our facilities provide 24/7 hot showers, organic meals, and unparalleled hospitality just minutes from the Kerio Valley viewpoints.
-            </p>
+      <LandingPageTemplate
+        title="Athlete Accommodation in Iten"
+        subtitle="The definitive basecamp for altitude training in the Home of Champions. Designed around the rigorous routines of elite and amateur runners."
+        introHeading="Train, Recover, Repeat."
+        introText="When you travel to Iten for altitude training, your accommodation is your sanctuary. It's where the actual physiological adaptations happen. Cherush Guesthouse eliminates all friction from your training camp."
+        featuresHeading="Built for Runners"
+        features={[
+          'Immediate access to world-famous red dirt running trails',
+          'Fast fiber WiFi to upload Strava data and work remotely',
+          'Self-catering kitchens to manage exact dietary requirements',
+          'Premium orthopedic mattresses for deep recovery sleep',
+          'Guaranteed 24/7 hot showers after cold morning runs'
+        ]}
+        mainContentHtml={
+          <div className="space-y-6">
+            <p>Our <strong>athlete accommodation in Iten</strong> has hosted marathoners, track athletes, and trail runners from across the globe. We understand the rhythm of a training camp: early bedtimes, 6:00 AM wake-ups, double days, and the need for absolute quiet in between sessions.</p>
+            <p>Located just off the main road, we avoid the dust and noise of the highway while keeping you within walking distance of Kamariny Stadium and local supermarkets. Focus entirely on your mileage; we handle the comfort.</p>
+            <LocalKnowledgeBase />
           </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="prose prose-lg prose-headings:font-display prose-headings:text-primary max-w-none">
-              <h2>Experience Excellence in the Rift Valley</h2>
-              <p>When searching for <strong>athlete accommodation in iten</strong>, you need a place that understands your unique requirements. At Cherush Guesthouse, we go beyond basic lodging. We provide a sanctuary.</p>
-              <ul className="not-prose space-y-4 mt-6">
-                {[
-                  'High-speed Fiber WiFi (Uninterrupted connectivity)',
-                  '24/7 Reliable Hot Showers',
-                  'Secure, walled compound with CCTV',
-                  'Organic, locally sourced meals customized to dietary needs',
-                  'Premium orthopedic mattresses for maximum recovery'
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-accent shrink-0" />
-                    <span className="text-text/80">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-10">
-                <Link href="/rooms" className="text-accent font-medium hover:underline">View Our Rooms &rarr;</Link>
-              </div>
-            </div>
-            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-lg">
-              <Image src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=1000" alt="Room interior at Cherush Guesthouse" fill className="object-cover" />
-            </div>
-          </div>
-        </section>
-      </article>
+        }
+        rooms={athleteRooms}
+        faqs={faqs}
+        targetKeyword="athlete accommodation in Iten"
+        heroImage="https://images.unsplash.com/photo-1542401886-65d6c61db217?auto=format&fit=crop&q=80&w=2000"
+      />
     </>
   )
 }

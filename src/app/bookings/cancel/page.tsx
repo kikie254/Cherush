@@ -1,5 +1,11 @@
 'use client'
 
+// This page is intentionally excluded from search engine indexing
+// It is accessed via email links and should not be crawled
+// Note: export const metadata cannot be used in client components;
+// the robots noindex is enforced via robots.ts disallow rule.
+
+
 import { useSearchParams } from 'next/navigation'
 import { useState, use, useEffect } from 'react'
 import { Container } from '@/components/ui/container'

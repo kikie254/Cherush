@@ -1,76 +1,64 @@
-import { getMetadata, getBreadcrumbSchema, getSpeakableSchema } from '@/lib/seo'
-import Image from 'next/image'
-import Link from 'next/link'
-import { CheckCircle2 } from 'lucide-react'
+import { getMetadata, getBreadcrumbSchema, getFAQSchema, getLodgingBusinessSchema } from '@/lib/seo'
+
+export const dynamic = 'force-dynamic'
+import { LandingPageTemplate } from '@/components/layout/landing-page-template'
+import { LocalKnowledgeBase } from '@/components/seo/local-knowledge-base'
+import { getRooms } from '@/lib/queries'
 
 export const metadata = getMetadata({
-  title: 'Long Stay Accommodation Iten | Cherush Guesthouse',
-  description: 'Specialized packages for athletes and digital nomads requiring long-stay accommodation in Iten for altitude training.',
+  title: 'Long Stay Accommodation in Iten | Digital Nomads & Training Camps',
+  description: 'Planning a long stay in Iten? We offer discounted monthly rates, reliable fast WiFi for remote work, and fully equipped self-catering kitchens.',
   path: '/long-stay-accommodation',
+  keywords: [
+    'long stay accommodation Iten',
+    'monthly rent Iten Kenya',
+    'remote work Iten',
+    'digital nomad Kenya',
+    'long term guest house Iten',
+  ],
 })
 
-const breadcrumbs = getBreadcrumbSchema([
-  { name: 'Home', item: '/' },
-  { name: 'Long Stay Accommodation Iten', item: '/long-stay-accommodation' }
-])
+const faqs = [
+  { question: 'Do you offer discounts for monthly stays?', answer: 'Yes! We offer substantial discounts for guests staying 4 weeks or longer. Our long-stay rates are designed to be highly competitive for athletes and remote workers on extended trips.' },
+  { question: 'Is the WiFi fast enough for video calls?', answer: 'Absolutely. We invest in high-speed fiber internet and backup power solutions, making Cherush Guesthouse one of the best locations for remote workers and digital nomads in Iten.' },
+  { question: 'Are cleaning and laundry included in long stays?', answer: 'Room cleaning is included. We also offer affordable on-site laundry services, which is essential when you are training multiple times a day.' },
+  { question: 'How do I pay for a long stay?', answer: 'We accept M-Pesa, cash, and major credit cards. For long stays, we typically arrange a monthly billing cycle.' }
+]
 
-export default function Page() {
+export default async function LongStayAccommodationPage() {
+  const rooms = await getRooms()
+
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getSpeakableSchema()) }} />
-      
-      <article className="min-h-screen bg-background">
-        {/* Hero */}
-        <section className="relative h-[60vh] flex items-center justify-center">
-          <Image src="https://images.unsplash.com/photo-1542401886-65d6c61db217?auto=format&fit=crop&q=80&w=2000" alt="Long-Term & Monthly Stays in Iten" fill className="object-cover brightness-50" priority />
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 className="font-display text-4xl md:text-6xl font-bold text-white mb-6">Long-Term & Monthly Stays in Iten</h1>
-            <p className="text-xl text-white/90 font-light max-w-2xl mx-auto">Specialized packages for athletes and digital nomads requiring long-stay accommodation in Iten for altitude training.</p>
-            <div className="mt-8 flex justify-center gap-4">
-              <Link href="/bookings" className="px-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors">Book Now</Link>
-              <Link href="/contact" className="px-8 py-3 bg-white/10 text-white border border-white/20 rounded-md font-medium hover:bg-white/20 transition-colors">Contact Us</Link>
-            </div>
-          </div>
-        </section>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Long Stay Accommodation', item: '/long-stay-accommodation' }])) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getLodgingBusinessSchema()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getFAQSchema(faqs)) }} />
 
-        <section className="py-20 px-4 max-w-5xl mx-auto">
-          {/* AI Search Answer Block */}
-          <div className="bg-accent/10 border-l-4 border-accent p-6 rounded-r-xl mb-12">
-            <h2 className="text-xl font-bold text-primary mb-2">Why Choose Cherush for Long Stay Accommodation Iten?</h2>
-            <p className="text-text/80 leading-relaxed">
-              Located in the heart of Iten, Kenya (The Home of Champions), Cherush Guesthouse offers specialized amenities tailored specifically for your needs. Whether you require high-speed fiber internet for remote work, specialized athlete nutrition, or secure environments for your family, our facilities provide 24/7 hot showers, organic meals, and unparalleled hospitality just minutes from the Kerio Valley viewpoints.
-            </p>
+      <LandingPageTemplate
+        title="Long Stay Accommodation in Iten"
+        subtitle="Settle in for an extended training camp or remote work retreat with our discounted monthly rates, fast WiFi, and dedicated workspaces."
+        introHeading="Your Long-Term Basecamp in the Highlands"
+        introText="Whether you are an athlete embedding yourself in the local running culture for three months, or a digital nomad seeking a serene, high-altitude working environment, our long stay options provide the perfect balance of affordability and premium comfort."
+        featuresHeading="Designed for Extended Stays"
+        features={[
+          'Significant discounts for weekly and monthly bookings',
+          'Enterprise-grade fiber WiFi for reliable remote work',
+          'Fully equipped self-catering kitchens to manage daily meals',
+          'Regular house-keeping and affordable laundry services',
+          'Dedicated quiet workspaces within the rooms'
+        ]}
+        mainContentHtml={
+          <div className="space-y-6">
+            <p>Booking <strong>long stay accommodation in Iten</strong> shouldn't mean sacrificing comfort for affordability. At Cherush Guesthouse, we recognize that guests staying for weeks or months have entirely different requirements than weekend tourists.</p>
+            <p>You need a routine. You need reliable internet that doesn't drop during Zoom calls, you need to be able to cook your own meals, and you need a quiet environment that respects your rest schedule. We provide the infrastructure; you bring the focus.</p>
+            <LocalKnowledgeBase />
           </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="prose prose-lg prose-headings:font-display prose-headings:text-primary max-w-none">
-              <h2>Experience Excellence in the Rift Valley</h2>
-              <p>When searching for <strong>long stay accommodation iten</strong>, you need a place that understands your unique requirements. At Cherush Guesthouse, we go beyond basic lodging. We provide a sanctuary.</p>
-              <ul className="not-prose space-y-4 mt-6">
-                {[
-                  'High-speed Fiber WiFi (Uninterrupted connectivity)',
-                  '24/7 Reliable Hot Showers',
-                  'Secure, walled compound with CCTV',
-                  'Organic, locally sourced meals customized to dietary needs',
-                  'Premium orthopedic mattresses for maximum recovery'
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-accent shrink-0" />
-                    <span className="text-text/80">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-10">
-                <Link href="/rooms" className="text-accent font-medium hover:underline">View Our Rooms &rarr;</Link>
-              </div>
-            </div>
-            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-lg">
-              <Image src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=1000" alt="Room interior at Cherush Guesthouse" fill className="object-cover" />
-            </div>
-          </div>
-        </section>
-      </article>
+        }
+        rooms={rooms.slice(0, 3)}
+        faqs={faqs}
+        targetKeyword="long stay accommodation Iten"
+        heroImage="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&q=80&w=2000"
+      />
     </>
   )
 }

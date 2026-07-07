@@ -7,32 +7,34 @@ import { SmoothScroll } from '@/components/providers/smooth-scroll'
 import { AnalyticsProvider } from '@/components/providers/analytics-provider'
 import { Chatbot } from '@/components/ui/chatbot'
 import { ServiceWorkerRegistration } from '@/components/providers/sw-registration'
-import { absoluteUrl } from '@/lib/utils'
 import { siteConfig } from '@/lib/constants'
+import { getOrganizationSchema, getWebSiteSchema } from '@/lib/seo'
 import './globals.css'
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  'https://cherushguesthouse.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://cherushguesthouse.com'
 const OG_IMAGE = `${SITE_URL}/og-image.jpg`
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Cherush Guesthouse | Affordable Luxury Accommodation in Kenya',
+    default: 'Cherush Guesthouse | Affordable Accommodation in Iten, Kenya',
     template: `%s | ${siteConfig.name}`,
   },
   description:
-    'Experience comfort, hospitality and affordable luxury at Cherush Guesthouse. Book rooms online, explore amenities and enjoy exceptional service in Iten, Kenya.',
+    'Cherush Guesthouse offers comfortable, affordable accommodation in Iten, Kenya — the Home of Champions. Perfect for athletes, families, remote workers, and tourists exploring the Great Rift Valley.',
   keywords: [
     'guesthouse Iten Kenya',
     'affordable accommodation Iten',
     'Cherush Guesthouse',
-    'hotel Iten',
+    'hotel Iten Kenya',
     'Elgeyo-Marakwet accommodation',
-    'runner guesthouse Kenya',
+    'athlete guesthouse Kenya',
+    'runner accommodation Iten',
     'book room Iten',
-    'boutique stay Kenya highlands',
+    'places to stay Iten',
+    'family accommodation Iten',
+    'budget guesthouse Iten',
+    'Home of Champions accommodation',
   ],
   authors: [{ name: siteConfig.name, url: SITE_URL }],
   creator: siteConfig.name,
@@ -41,9 +43,9 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   openGraph: {
-    title: 'Cherush Guesthouse | Affordable Luxury Accommodation in Kenya',
+    title: 'Cherush Guesthouse | Affordable Accommodation in Iten, Kenya',
     description:
-      'Experience comfort, hospitality and affordable luxury at Cherush Guesthouse. Book rooms online, explore amenities and enjoy exceptional service.',
+      'Comfortable, affordable accommodation in Iten, Kenya — the Home of Champions. Ideal for athletes, families, remote workers, and tourists. Book your stay online.',
     url: SITE_URL,
     siteName: siteConfig.name,
     locale: 'en_KE',
@@ -53,16 +55,18 @@ export const metadata: Metadata = {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: 'Cherush Guesthouse – Iten, Kenya',
+        alt: 'Cherush Guesthouse — Iten, Kenya',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Cherush Guesthouse | Affordable Luxury Accommodation in Kenya',
+    title: 'Cherush Guesthouse | Affordable Accommodation in Iten, Kenya',
     description:
-      'Experience comfort, hospitality and affordable luxury at Cherush Guesthouse. Book rooms online and enjoy exceptional service in Iten, Kenya.',
+      'Comfortable, affordable accommodation in Iten, Kenya. Book rooms online and enjoy exceptional service in the Home of Champions.',
     images: [OG_IMAGE],
+    creator: '@cherushguesthouse',
+    site: '@cherushguesthouse',
   },
   robots: {
     index: true,
@@ -76,8 +80,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Add your Google Search Console verification token here
-    google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || '',
+    google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || undefined,
   },
   category: 'travel',
 }
@@ -99,64 +102,31 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="en-KE" className={`${cormorant.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
         <meta name="theme-color" content="#1d2a22" />
         <meta name="color-scheme" content="light" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* DNS prefetch for analytics */}
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-        {/* Website schema */}
+        {/* WebSite schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              '@id': `${SITE_URL}/#website`,
-              url: SITE_URL,
-              name: siteConfig.name,
-              description: siteConfig.description,
-              potentialAction: {
-                '@type': 'SearchAction',
-                target: `${SITE_URL}/rooms?search={search_term_string}`,
-                'query-input': 'required name=search_term_string',
-              },
-            }),
+            __html: JSON.stringify(getWebSiteSchema()),
           }}
         />
         {/* Organization schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Organization',
-              '@id': `${SITE_URL}/#organization`,
-              name: siteConfig.name,
-              url: SITE_URL,
-              logo: `${SITE_URL}/logo.png`,
-              contactPoint: [
-                {
-                  '@type': 'ContactPoint',
-                  contactType: 'customer service',
-                  availableLanguage: ['English', 'Swahili'],
-                },
-              ],
-              address: {
-                '@type': 'PostalAddress',
-                streetAddress: 'Iten-Kabarnet Road',
-                addressLocality: 'Iten',
-                addressRegion: 'Elgeyo-Marakwet County',
-                addressCountry: 'KE',
-              },
-              sameAs: [siteConfig.social.instagram, siteConfig.social.whatsapp],
-            }),
+            __html: JSON.stringify(getOrganizationSchema()),
           }}
         />
       </head>

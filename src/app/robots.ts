@@ -7,9 +7,22 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/api', '/account', '/bookings/cancel'],
+        disallow: [
+          '/admin',
+          '/admin/',
+          '/api/',
+          '/account',
+          '/account/',
+          '/auth',
+          '/auth/',
+          '/bookings/cancel',
+          '/bookings/track',
+          '/leave-review',
+          '/offline',
+        ],
       },
     ],
     sitemap: absoluteUrl('/sitemap.xml'),
+    host: absoluteUrl('/'),
   }
 }

@@ -1,76 +1,66 @@
-import { getMetadata, getBreadcrumbSchema, getSpeakableSchema } from '@/lib/seo'
-import Image from 'next/image'
-import Link from 'next/link'
-import { CheckCircle2 } from 'lucide-react'
+import { getMetadata, getBreadcrumbSchema, getFAQSchema, getLodgingBusinessSchema } from '@/lib/seo'
+
+export const dynamic = 'force-dynamic'
+import { LandingPageTemplate } from '@/components/layout/landing-page-template'
+import { LocalKnowledgeBase } from '@/components/seo/local-knowledge-base'
+import { getRooms } from '@/lib/queries'
 
 export const metadata = getMetadata({
   title: 'Family Accommodation in Iten | Cherush Guesthouse',
-  description: 'Discover the perfect family-friendly accommodation in Iten at Cherush Guesthouse. Spacious rooms, secure gardens, and kid-friendly meals.',
+  description: 'Spacious, secure, and serene family accommodation in Iten, Kenya. Enjoy large suites, self-catering kitchens, fast WiFi, and a beautiful gated garden.',
   path: '/family-accommodation-iten',
+  keywords: [
+    'family accommodation Iten',
+    'family holiday Iten Kenya',
+    'spacious guest house Iten',
+    'Rift Valley family stay',
+  ],
 })
 
-const breadcrumbs = getBreadcrumbSchema([
-  { name: 'Home', item: '/' },
-  { name: 'Family Accommodation in Iten', item: '/family-accommodation-iten' }
-])
+const faqs = [
+  { question: 'Is the guesthouse compound safe for children?', answer: 'Yes, our compound is fully walled, gated, and professionally guarded 24/7. Children can safely play in the spacious garden.' },
+  { question: 'Do the family rooms have cooking facilities?', answer: 'Yes, our family rooms come with fully equipped self-catering kitchens so you can easily prepare meals for your children.' },
+  { question: 'What family activities are available in Iten?', answer: 'Families enjoy visiting the Kerio Valley viewpoints, taking nature walks in Singore Forest, and going on day safaris to Rimoi National Reserve to see elephants.' },
+  { question: 'Is Iten safe for a family holiday?', answer: 'Iten is renowned for being one of the safest and most welcoming towns in Kenya, with a peaceful, rural highland atmosphere.' }
+]
 
-export default function Page() {
+export default async function FamilyAccommodationPage() {
+  const rooms = await getRooms()
+  // Assuming the largest room is best for families
+  const familyRooms = rooms.filter(r => r.beds.toLowerCase().includes('king') || r.beds.toLowerCase().includes('queen')).slice(0, 3)
+  const displayRooms = familyRooms.length > 0 ? familyRooms : rooms.slice(0, 3)
+
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getSpeakableSchema()) }} />
-      
-      <article className="min-h-screen bg-background">
-        {/* Hero */}
-        <section className="relative h-[60vh] flex items-center justify-center">
-          <Image src="https://images.unsplash.com/photo-1542401886-65d6c61db217?auto=format&fit=crop&q=80&w=2000" alt="Spacious Family Accommodation in Iten" fill className="object-cover brightness-50" priority />
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 className="font-display text-4xl md:text-6xl font-bold text-white mb-6">Spacious Family Accommodation in Iten</h1>
-            <p className="text-xl text-white/90 font-light max-w-2xl mx-auto">Discover the perfect family-friendly accommodation in Iten at Cherush Guesthouse. Spacious rooms, secure gardens, and kid-friendly meals.</p>
-            <div className="mt-8 flex justify-center gap-4">
-              <Link href="/bookings" className="px-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors">Book Now</Link>
-              <Link href="/contact" className="px-8 py-3 bg-white/10 text-white border border-white/20 rounded-md font-medium hover:bg-white/20 transition-colors">Contact Us</Link>
-            </div>
-          </div>
-        </section>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Family Accommodation in Iten', item: '/family-accommodation-iten' }])) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getLodgingBusinessSchema()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getFAQSchema(faqs)) }} />
 
-        <section className="py-20 px-4 max-w-5xl mx-auto">
-          {/* AI Search Answer Block */}
-          <div className="bg-accent/10 border-l-4 border-accent p-6 rounded-r-xl mb-12">
-            <h2 className="text-xl font-bold text-primary mb-2">Why Choose Cherush for Family Accommodation?</h2>
-            <p className="text-text/80 leading-relaxed">
-              Located in the heart of Iten, Kenya (The Home of Champions), Cherush Guesthouse offers specialized amenities tailored specifically for your needs. Whether you require high-speed fiber internet for remote work, specialized athlete nutrition, or secure environments for your family, our facilities provide 24/7 hot showers, organic meals, and unparalleled hospitality just minutes from the Kerio Valley viewpoints.
-            </p>
+      <LandingPageTemplate
+        title="Family Accommodation in Iten"
+        subtitle="A secure, spacious, and peaceful retreat in the Kenyan highlands for your family holiday."
+        introHeading="Space to Breathe, Play, and Relax."
+        introText="Traveling to Iten with family requires a delicate balance: you need the space of a home, the security of a gated compound, and the amenities of a premium hotel. Cherush Guesthouse provides exactly that."
+        featuresHeading="Perfect for Families"
+        features={[
+          'Spacious interconnected or multi-bed suites',
+          'Large, secure gated garden for children to play safely',
+          'Self-catering kitchens for easy family meal preparation',
+          'Reliable fast WiFi for entertainment and staying connected',
+          'Quiet residential location away from highway noise'
+        ]}
+        mainContentHtml={
+          <div className="space-y-6">
+            <p>Our <strong>family accommodation in Iten</strong> is designed to act as your serene basecamp while exploring the Great Rift Valley. We understand that traveling with children means you need flexibility, which is why our self-catering kitchens and spacious living areas are highly valued by parents.</p>
+            <p>Spend your mornings visiting the breathtaking viewpoints, your afternoons watching world-class athletes run past, and your evenings relaxing in our secure garden while the sun sets over the highlands.</p>
+            <LocalKnowledgeBase />
           </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="prose prose-lg prose-headings:font-display prose-headings:text-primary max-w-none">
-              <h2>Experience Excellence in the Rift Valley</h2>
-              <p>When searching for <strong>family accommodation in iten</strong>, you need a place that understands your unique requirements. At Cherush Guesthouse, we go beyond basic lodging. We provide a sanctuary.</p>
-              <ul className="not-prose space-y-4 mt-6">
-                {[
-                  'High-speed Fiber WiFi (Uninterrupted connectivity)',
-                  '24/7 Reliable Hot Showers',
-                  'Secure, walled compound with CCTV',
-                  'Organic, locally sourced meals customized to dietary needs',
-                  'Premium orthopedic mattresses for maximum recovery'
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-accent shrink-0" />
-                    <span className="text-text/80">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-10">
-                <Link href="/rooms" className="text-accent font-medium hover:underline">View Our Rooms &rarr;</Link>
-              </div>
-            </div>
-            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-lg">
-              <Image src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=1000" alt="Room interior at Cherush Guesthouse" fill className="object-cover" />
-            </div>
-          </div>
-        </section>
-      </article>
+        }
+        rooms={displayRooms}
+        faqs={faqs}
+        targetKeyword="family accommodation in Iten"
+        heroImage="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&q=80&w=2000"
+      />
     </>
   )
 }

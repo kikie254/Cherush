@@ -1,4 +1,4 @@
-import { getMetadata, getBreadcrumbSchema, getFAQSchema } from '@/lib/seo'
+import { getMetadata, getBreadcrumbSchema, getFAQSchema, getArticleSchema } from '@/lib/seo'
 import { getBlogPost, getBlogPosts } from '@/lib/blog-data'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
@@ -11,12 +11,12 @@ interface Props {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const post = await getBlogPost(slug)
-  
+
   if (!post) {
     return getMetadata({
-      title: 'Not Found',
+      title: 'Article Not Found',
       path: `/blog/${slug}`,
-      noindex: true
+      noindex: true,
     })
   }
 
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props) {
     description: post.excerpt,
     path: `/blog/${post.slug}`,
     ogType: 'article',
-    ogImage: post.image
+    ogImage: post.image,
   })
 }
 
@@ -40,32 +40,23 @@ export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
   const post = await getBlogPost(slug)
 
-  if (!post) {
-    notFound()
-  }
+  if (!post) notFound()
 
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: 'Home', item: '/' },
     { name: 'Blog', item: '/blog' },
-    { name: post.title, item: `/blog/${post.slug}` }
+    { name: post.title, item: `/blog/${post.slug}` },
   ])
 
-  const faqSchema = post.faqs ? getFAQSchema(post.faqs) : null
+  const articleSchema = getArticleSchema({
+    title: post.title,
+    description: post.excerpt,
+    image: post.image,
+    datePublished: post.datePublished,
+    path: `/blog/${post.slug}`,
+  })
 
-  // Generate article schema
-  const articleSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    'headline': post.title,
-    'image': [post.image],
-    'datePublished': post.datePublished,
-    'dateModified': post.datePublished,
-    'author': [{
-      '@type': 'Person',
-      'name': 'Cherush Content Team',
-      'url': 'https://cherushguesthouse.com/about-iten'
-    }]
-  }
+  const faqSchema = post.faqs && post.faqs.length > 0 ? getFAQSchema(post.faqs) : null
 
   return (
     <>
@@ -88,17 +79,20 @@ export default async function BlogPostPage({ params }: Props) {
         <header className="relative h-[60vh] flex items-end justify-center overflow-hidden pb-16">
           <Image
             src={post.image}
-            alt={post.title}
+            alt={`${post.title} — Cherush Guesthouse Blog`}
             fill
             className="object-cover brightness-[0.4]"
             priority
+            sizes="100vw"
           />
           <div className="relative z-10 text-center px-4 max-w-4xl mx-auto w-full">
             <div className="flex items-center justify-center gap-3 mb-6">
               <span className="px-3 py-1 bg-accent rounded-full text-white text-sm font-medium">
                 {post.category}
               </span>
-              <span className="text-white/80 text-sm">{post.date}</span>
+              <span className="text-white/80 text-sm">
+                <time dateTime={post.datePublished}>{post.date}</time>
+              </span>
             </div>
             <h1 className="font-display text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
               {post.title}
@@ -108,41 +102,64 @@ export default async function BlogPostPage({ params }: Props) {
 
         <div className="px-4 md:px-8 max-w-4xl mx-auto -mt-8 relative z-20">
           <div className="bg-white rounded-2xl shadow-sm border border-primary/5 p-8 md:p-12">
-            
+
             {/* E-E-A-T Author Block */}
             <div className="flex items-center gap-4 mb-10 pb-8 border-b border-primary/10">
-              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center shrink-0" aria-hidden="true">
                 <span className="text-accent font-bold">C</span>
               </div>
               <div>
                 <p className="font-semibold text-primary">Cherush Content Team</p>
                 <div className="flex items-center gap-2 text-sm text-text/60">
                   <span>Local Iten Experts</span>
-                  <span>&bull;</span>
-                  <span>Last Reviewed: {new Date(post.datePublished).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                  <span aria-hidden="true">•</span>
+                  <time dateTime={post.datePublished}>
+                    Last Reviewed: {new Date(post.datePublished).toLocaleDateString('en-KE', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  </time>
                 </div>
               </div>
             </div>
 
-            <div 
+            <div
               className="prose prose-lg prose-headings:font-display prose-headings:text-primary prose-a:text-accent hover:prose-a:text-primary max-w-none prose-img:rounded-xl"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
             {post.faqs && post.faqs.length > 0 && (
               <div className="mt-16 pt-12 border-t border-primary/10">
-                <h3 className="font-display text-3xl text-primary mb-8">Frequently Asked Questions</h3>
+                <h2 className="font-display text-3xl text-primary mb-8">Frequently Asked Questions</h2>
                 <div className="space-y-6">
                   {post.faqs.map((faq, i) => (
                     <div key={i} className="bg-background rounded-xl p-6">
-                      <h4 className="font-semibold text-lg mb-2">{faq.question}</h4>
+                      <h3 className="font-semibold text-lg mb-2">{faq.question}</h3>
                       <p className="text-text/80">{faq.answer}</p>
                     </div>
                   ))}
                 </div>
               </div>
             )}
-            
+
+            {/* Internal linking footer */}
+            <div className="mt-16 pt-10 border-t border-primary/10 flex gap-4 flex-wrap">
+              <Link
+                href="/blog"
+                className="text-sm text-accent hover:underline font-medium"
+              >
+                ← Back to Blog
+              </Link>
+              <Link
+                href="/rooms"
+                className="text-sm text-accent hover:underline font-medium"
+              >
+                View Our Rooms →
+              </Link>
+              <Link
+                href="/bookings"
+                className="ml-auto inline-flex h-10 items-center justify-center rounded-lg bg-accent px-5 text-sm font-medium text-white transition-colors hover:bg-accent/90"
+              >
+                Book Your Stay
+              </Link>
+            </div>
           </div>
         </div>
       </article>

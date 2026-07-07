@@ -9,9 +9,15 @@ import { siteConfig } from '@/lib/constants'
 import { getMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = getMetadata({
-  title: 'Contact',
-  description: `Get in touch with Cherush Guesthouse in Iten, Kenya. Call, WhatsApp, or email us for bookings, enquiries and directions. ${siteConfig.phone}`,
+  title: 'Contact Us',
+  description: `Get in touch with Cherush Guesthouse in Iten, Kenya. Call, WhatsApp, or email us for bookings, availability enquiries, and travel directions. We reply within a few hours. ${siteConfig.phone}`,
   path: '/contact',
+  keywords: [
+    'contact Cherush Guesthouse',
+    'Iten guesthouse phone number',
+    'book guesthouse Iten Kenya',
+    'Cherush contact',
+  ],
 })
 
 const contactCards = [

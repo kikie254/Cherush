@@ -1,27 +1,26 @@
-import { Container } from '@/components/ui/container'
-import { Button } from '@/components/ui/button'
-import type { Metadata } from 'next'
+import { getMetadata } from '@/lib/seo'
+import { RetryButton } from './retry-button'
 
-export const metadata: Metadata = {
-  title: 'Offline | Cherush Guesthouse',
-  robots: { index: false, follow: false },
-}
+export const metadata = getMetadata({
+  title: 'Offline',
+  description: 'You appear to be offline. Please check your connection and try again.',
+  path: '/offline',
+  noindex: true,
+})
 
 export default function OfflinePage() {
   return (
-    <section className="py-32 min-h-[60vh] flex items-center" aria-labelledby="offline-heading">
-      <Container className="text-center max-w-lg">
+    <main className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="text-center max-w-md">
         <div className="text-6xl mb-6" aria-hidden="true">📡</div>
-        <h1 id="offline-heading" className="font-display text-4xl text-primary mb-4">
-          You&apos;re offline
+        <h1 className="font-display text-4xl text-primary font-bold mb-4">
+          You&apos;re Offline
         </h1>
-        <p className="text-muted text-lg mb-10 leading-relaxed">
+        <p className="text-text/70 leading-7 mb-8">
           It looks like you&apos;ve lost your internet connection. Please check your network and try again.
         </p>
-        <Button href="/" variant="primary">
-          Try again
-        </Button>
-      </Container>
-    </section>
+        <RetryButton />
+      </div>
+    </main>
   )
 }

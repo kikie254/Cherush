@@ -6,25 +6,39 @@ import { getRooms } from '@/lib/queries'
 import { formatCurrency } from '@/lib/utils'
 import { getMetadata, getBreadcrumbSchema, getOfferSchema } from '@/lib/seo'
 import { ShieldCheck, Wifi, Coffee, CarFront, Users } from 'lucide-react'
+import Link from 'next/link'
 
 interface PageProps {
   params: Promise<{ slug: string }>
+}
+
+export async function generateStaticParams() {
+  const rooms = await getRooms()
+  return rooms.map((room) => ({ slug: room.slug }))
 }
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params
   const rooms = await getRooms()
   const room = rooms.find((item) => item.slug === slug)
-  
+
   if (!room) return getMetadata({ title: 'Room Not Found', path: `/rooms/${slug}`, noindex: true })
 
   return getMetadata({
-    title: `${room.name} | Cherush Guesthouse`,
-    description: room.description || `Book the ${room.name} at Cherush Guesthouse Iten. Experience luxury, high-speed WiFi, and 24/7 hot showers. Perfect for your stay in the Great Rift Valley.`,
+    title: room.name,
+    description: room.description
+      || `Book the ${room.name} at Cherush Guesthouse in Iten, Kenya. Enjoy fast WiFi, 24-hour hot showers, and self-catering kitchen. From KES ${room.price_per_night.toLocaleString()}/night.`,
     path: `/rooms/${room.slug}`,
     ogImage: room.cover_image,
+    keywords: [
+      `${room.name} Iten`,
+      'room Cherush Guesthouse',
+      'accommodation Iten Kenya',
+      'book room Iten',
+    ],
   })
 }
+
 
 export default async function RoomDetailPage({ params }: PageProps) {
   const { slug } = await params

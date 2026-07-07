@@ -1,76 +1,66 @@
-import { getMetadata, getBreadcrumbSchema, getSpeakableSchema } from '@/lib/seo'
-import Image from 'next/image'
-import Link from 'next/link'
-import { CheckCircle2 } from 'lucide-react'
+import { getMetadata, getBreadcrumbSchema, getFAQSchema, getLodgingBusinessSchema } from '@/lib/seo'
+
+export const dynamic = 'force-dynamic'
+import { LandingPageTemplate } from '@/components/layout/landing-page-template'
+import { LocalKnowledgeBase } from '@/components/seo/local-knowledge-base'
+import { getRooms } from '@/lib/queries'
 
 export const metadata = getMetadata({
-  title: 'Budget Accommodation in Iten | Cherush Guesthouse',
-  description: 'High-quality, secure, and clean budget accommodation options for athletes and backpackers training in the Home of Champions.',
+  title: 'Budget Accommodation in Iten | Affordable Guest House',
+  description: 'Looking for budget accommodation in Iten without sacrificing quality? Cherush Guesthouse offers affordable rooms with hot showers, WiFi, and self-catering kitchens.',
   path: '/budget-accommodation-iten',
+  keywords: [
+    'budget accommodation Iten',
+    'cheap hotels Iten Kenya',
+    'affordable guest house Iten',
+    'hostels in Iten',
+    'backpackers Iten',
+  ],
 })
 
-const breadcrumbs = getBreadcrumbSchema([
-  { name: 'Home', item: '/' },
-  { name: 'Budget Accommodation in Iten', item: '/budget-accommodation-iten' }
-])
+const faqs = [
+  { question: 'Is budget accommodation safe in Iten?', answer: 'Yes. At Cherush Guesthouse, even our most affordable rooms are located within our highly secure, walled, and professionally guarded compound.' },
+  { question: 'Do budget rooms have hot showers?', answer: 'Absolutely. We believe hot showers are a necessity, not a luxury. All our rooms, regardless of price, feature reliable 24/7 hot water.' },
+  { question: 'How can I save money on food during my stay?', answer: 'The best way to save money is to use the self-catering kitchens included with our rooms. You can buy fresh, extremely affordable local produce from the Iten market.' },
+  { question: 'Are there hidden fees?', answer: 'No. Our pricing is totally transparent. The rate you see is the rate you pay, and it includes WiFi, water, and parking.' }
+]
 
-export default function Page() {
+export default async function BudgetAccommodationPage() {
+  const rooms = await getRooms()
+  // Sort by price ascending to show budget rooms first
+  const budgetRooms = [...rooms].sort((a, b) => a.price_per_night - b.price_per_night).slice(0, 3)
+
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getSpeakableSchema()) }} />
-      
-      <article className="min-h-screen bg-background">
-        {/* Hero */}
-        <section className="relative h-[60vh] flex items-center justify-center">
-          <Image src="https://images.unsplash.com/photo-1542401886-65d6c61db217?auto=format&fit=crop&q=80&w=2000" alt="Affordable Budget Accommodation in Iten" fill className="object-cover brightness-50" priority />
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 className="font-display text-4xl md:text-6xl font-bold text-white mb-6">Affordable Budget Accommodation in Iten</h1>
-            <p className="text-xl text-white/90 font-light max-w-2xl mx-auto">High-quality, secure, and clean budget accommodation options for athletes and backpackers training in the Home of Champions.</p>
-            <div className="mt-8 flex justify-center gap-4">
-              <Link href="/bookings" className="px-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors">Book Now</Link>
-              <Link href="/contact" className="px-8 py-3 bg-white/10 text-white border border-white/20 rounded-md font-medium hover:bg-white/20 transition-colors">Contact Us</Link>
-            </div>
-          </div>
-        </section>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Budget Accommodation Iten', item: '/budget-accommodation-iten' }])) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getLodgingBusinessSchema()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getFAQSchema(faqs)) }} />
 
-        <section className="py-20 px-4 max-w-5xl mx-auto">
-          {/* AI Search Answer Block */}
-          <div className="bg-accent/10 border-l-4 border-accent p-6 rounded-r-xl mb-12">
-            <h2 className="text-xl font-bold text-primary mb-2">Why Choose Cherush for Budget Accommodation?</h2>
-            <p className="text-text/80 leading-relaxed">
-              Located in the heart of Iten, Kenya (The Home of Champions), Cherush Guesthouse offers specialized amenities tailored specifically for your needs. Whether you require high-speed fiber internet for remote work, specialized athlete nutrition, or secure environments for your family, our facilities provide 24/7 hot showers, organic meals, and unparalleled hospitality just minutes from the Kerio Valley viewpoints.
-            </p>
+      <LandingPageTemplate
+        title="Budget Accommodation in Iten"
+        subtitle="High-quality, secure, and comfortable rooms designed for athletes and travelers on a strict budget."
+        introHeading="Affordable Excellence in the Home of Champions"
+        introText="Finding budget accommodation in Iten usually means compromising on security, internet, or hot water. At Cherush Guesthouse, we refuse to compromise on the essentials."
+        featuresHeading="Premium Features at Budget Rates"
+        features={[
+          'Highly competitive nightly and monthly rates',
+          'No extra charge for high-speed fiber WiFi',
+          'Save money on restaurants using our self-catering kitchens',
+          'Guaranteed hot showers included in all room rates',
+          'Same premium security and compound access as luxury suites'
+        ]}
+        mainContentHtml={
+          <div className="space-y-6">
+            <p>Our <strong>budget accommodation in Iten</strong> is specifically designed for development athletes, backpackers, and students who need their funds to stretch for a long training camp or extensive travel itinerary.</p>
+            <p>We provide the fundamental necessities for a successful stay—security, cleanliness, connectivity, and recovery infrastructure—at a price point that makes long-term stays in the Rift Valley highly accessible.</p>
+            <LocalKnowledgeBase />
           </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="prose prose-lg prose-headings:font-display prose-headings:text-primary max-w-none">
-              <h2>Experience Excellence in the Rift Valley</h2>
-              <p>When searching for <strong>budget accommodation in iten</strong>, you need a place that understands your unique requirements. At Cherush Guesthouse, we go beyond basic lodging. We provide a sanctuary.</p>
-              <ul className="not-prose space-y-4 mt-6">
-                {[
-                  'High-speed Fiber WiFi (Uninterrupted connectivity)',
-                  '24/7 Reliable Hot Showers',
-                  'Secure, walled compound with CCTV',
-                  'Organic, locally sourced meals customized to dietary needs',
-                  'Premium orthopedic mattresses for maximum recovery'
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-accent shrink-0" />
-                    <span className="text-text/80">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-10">
-                <Link href="/rooms" className="text-accent font-medium hover:underline">View Our Rooms &rarr;</Link>
-              </div>
-            </div>
-            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-lg">
-              <Image src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=1000" alt="Room interior at Cherush Guesthouse" fill className="object-cover" />
-            </div>
-          </div>
-        </section>
-      </article>
+        }
+        rooms={budgetRooms}
+        faqs={faqs}
+        targetKeyword="budget accommodation Iten"
+        heroImage="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80&w=2000"
+      />
     </>
   )
 }
