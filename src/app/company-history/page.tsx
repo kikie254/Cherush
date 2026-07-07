@@ -1,4 +1,4 @@
-import { getMetadata, getBreadcrumbSchema } from '@/lib/seo'
+﻿import { getMetadata, getBreadcrumbSchema } from '@/lib/seo'
 
 export const metadata = getMetadata({
   title: 'Our History | Cherush Guesthouse',

@@ -31,7 +31,7 @@ const ADVANTAGES = [
   {
     icon: ShieldAlert,
     title: 'Safe Gated Living',
-    desc: 'Full secure perimeter walls with guarded entryways, located in Iten’s quiet, friendly residential neighborhood.'
+    desc: "Full secure perimeter walls with guarded entryways, located in Iten's quiet, friendly residential neighborhood."
   }
 ]
 
