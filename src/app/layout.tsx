@@ -11,7 +11,9 @@ import { absoluteUrl } from '@/lib/utils'
 import { siteConfig } from '@/lib/constants'
 import './globals.css'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://cherushguesthouse.com'
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  'https://cherushguesthouse.com'
 const OG_IMAGE = `${SITE_URL}/og-image.jpg`
 
 export const metadata: Metadata = {

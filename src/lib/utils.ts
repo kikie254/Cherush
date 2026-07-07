@@ -26,7 +26,9 @@ export function calculateNights(checkIn: string, checkOut: string) {
 }
 
 export function absoluteUrl(path = '/') {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const base =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    'https://cherushguesthouse.com'
   return new URL(path, base).toString()
 }
 
