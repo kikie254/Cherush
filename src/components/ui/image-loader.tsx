@@ -2,20 +2,33 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
+import type { ImageProps } from 'next/image'
 
-export function OptimizedImage({ src, alt, ...props }: any) {
-  const [isLoading, setIsLoading] = useState(true)
-  
+// Omit className so we can type-safely handle it ourselves
+type OptimizedImageProps = Omit<ImageProps, 'className'> & {
+  className?: string
+}
+
+/**
+ * OptimizedImage — Next/Image wrapper with a graceful blur-in reveal.
+ *
+ * CLS fix: no extra wrapping <div>. The blur is applied directly on the
+ * <Image> element so the parent's layout box is not disturbed.
+ * The parent MUST have `position: relative` and defined dimensions (fill mode)
+ * or explicit width/height (fixed mode).
+ */
+export function OptimizedImage({ src, alt, className = '', ...props }: OptimizedImageProps) {
+  const [loaded, setLoaded] = useState(false)
+
   return (
-    <div className="relative overflow-hidden w-full h-full">
-      {isLoading && <div className="absolute inset-0 bg-primary/10 animate-pulse" />}
-      <Image 
-        src={src} 
-        alt={alt} 
-        onLoad={() => setIsLoading(false)} 
-        className={`duration-700 ease-in-out ${isLoading ? 'scale-110 blur-2xl grayscale' : 'scale-100 blur-0 grayscale-0'} ${props.className || ''}`} 
-        {...props} 
-      />
-    </div>
+    <Image
+      src={src}
+      alt={alt}
+      onLoad={() => setLoaded(true)}
+      className={`transition-[filter,transform] duration-500 ease-in-out ${
+        loaded ? 'blur-0 scale-100' : 'blur-sm scale-[1.02]'
+      } ${className}`}
+      {...props}
+    />
   )
 }

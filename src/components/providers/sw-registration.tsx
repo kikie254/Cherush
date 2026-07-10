@@ -3,24 +3,36 @@
 import { useEffect } from 'react'
 
 /**
- * Registers the service worker for offline support and caching.
- * Runs only on client, outside of development mode.
+ * Registers the service worker for offline support and asset caching.
+ * - Only runs in production.
+ * - Removes console.debug (no log noise in production).
+ * - Deferred via requestIdleCallback so it never competes with page hydration.
  */
 export function ServiceWorkerRegistration() {
   useEffect(() => {
+    const isClient = typeof window !== 'undefined'
     if (
-      typeof window !== 'undefined' &&
-      'serviceWorker' in navigator &&
-      process.env.NODE_ENV === 'production'
-    ) {
+      !isClient ||
+      !('serviceWorker' in navigator) ||
+      process.env.NODE_ENV !== 'production'
+    )
+      return
+
+    const register = () => {
       navigator.serviceWorker
         .register('/sw.js', { scope: '/' })
-        .then((reg) => {
-          console.debug('[SW] Registered successfully', reg.scope)
+        .catch(() => {
+          // SW registration failure is non-fatal — site works without it
         })
-        .catch((err) => {
-          console.warn('[SW] Registration failed', err)
-        })
+    }
+
+    // Defer SW registration until the browser is idle so it doesn't
+    // compete with initial hydration and LCP image decode
+    if (isClient && 'requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(register, { timeout: 4000 })
+    } else {
+      // Fallback: delay 3s on browsers without rIC support
+      setTimeout(register, 3000)
     }
   }, [])
 

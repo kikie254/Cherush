@@ -5,8 +5,8 @@ import { Footer } from '@/components/layout/footer'
 import { AppProviders } from '@/components/providers/app-providers'
 import { SmoothScroll } from '@/components/providers/smooth-scroll'
 import { AnalyticsProvider } from '@/components/providers/analytics-provider'
-import { Chatbot } from '@/components/ui/chatbot'
 import { ServiceWorkerRegistration } from '@/components/providers/sw-registration'
+import { ClientChatbot } from '@/components/ui/client-chatbot'
 import { siteConfig } from '@/lib/constants'
 import { getOrganizationSchema, getWebSiteSchema } from '@/lib/seo'
 import './globals.css'
@@ -110,11 +110,10 @@ export default function RootLayout({
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* DNS prefetch for analytics */}
+        {/* DNS prefetch for analytics and API */}
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        <link rel="dns-prefetch" href="https://supabase.co" />
         {/* WebSite schema */}
         <script
           type="application/ld+json"
@@ -149,8 +148,8 @@ export default function RootLayout({
               </main>
               <Footer />
             </div>
-            {/* Global floating AI concierge */}
-            <Chatbot />
+            {/* Global floating AI concierge — deferred, client-only */}
+            <ClientChatbot />
           </AppProviders>
         </SmoothScroll>
       </body>

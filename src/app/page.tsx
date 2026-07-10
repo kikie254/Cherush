@@ -1,16 +1,19 @@
 import { Hero } from '@/components/home/hero'
 import { RoomEditorial } from '@/components/home/room-editorial'
-import { HorizontalExperience } from '@/components/home/horizontal-experience'
 import { Container } from '@/components/ui/container'
 import { SectionHeading } from '@/components/ui/section-heading'
 import { TrustBadges } from '@/components/home/trust-badges'
 import { WhyChooseUs } from '@/components/home/why-choose-us'
 import { LocalPartners } from '@/components/home/local-partners'
-import { DistanceCalculator } from '@/components/ui/distance-calculator'
-import { FAQSection } from '@/components/home/faq-section'
-import { FloatingActions } from '@/components/home/floating-actions'
-import { TestimonialsCarousel } from '@/components/home/testimonials-carousel'
-import { getReviews, getRooms, faqs } from '@/lib/queries'
+import { GalleryPreview } from '@/components/home/gallery-preview'
+import {
+  DeferredHorizontalExperience,
+  DeferredTestimonialsCarousel,
+  DeferredGoogleMap,
+  DeferredFAQSection,
+  DeferredFloatingActions,
+} from '@/components/home/deferred-components'
+import { getReviews, getRooms, getGallery, faqs } from '@/lib/queries'
 import { images } from '@/lib/site-data'
 import { getMetadata, getLodgingBusinessSchema, getFAQSchema, getReviewSchema } from '@/lib/seo'
 import Image from 'next/image'
@@ -39,11 +42,11 @@ export const metadata: Metadata = getMetadata({
 export const revalidate = 3600
 
 export default async function HomePage() {
-  const [rooms, reviews] = await Promise.all([getRooms(), getReviews()])
+  const [rooms, reviews, gallery] = await Promise.all([getRooms(), getReviews(), getGallery()])
 
   return (
     <>
-      {/* ── JSON-LD Structured Data ────────────────────────────────────────── */}
+      {/* ── JSON-LD Structured Data ─────────────────────────────────────── */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(getLodgingBusinessSchema()) }}
@@ -59,12 +62,16 @@ export default async function HomePage() {
         />
       )}
 
+      {/* ── Hero (LCP element — SSR, priority image) ────────────────────── */}
       <Hero image={images.hero} />
 
-      {/* Trust Badges */}
+      {/* ── Trust Badges (above-fold, SSR, no client JS) ────────────────── */}
       <TrustBadges />
 
-      {/* Rooms */}
+      {/* ── Why Choose Us (SSR, text-only) ──────────────────────────────── */}
+      <WhyChooseUs />
+
+      {/* ── Rooms editorial (SSR — first image eager, rest lazy) ────────── */}
       <section className="py-32 relative bg-background" aria-labelledby="rooms-heading">
         <Container className="space-y-10">
           <SectionHeading
@@ -81,30 +88,50 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Why Choose Us */}
-      <WhyChooseUs />
-
+      {/* ── Local Partners (SSR, text-only) ─────────────────────────────── */}
       <LocalPartners />
 
-      <HorizontalExperience />
+      {/* ── Horizontal Experience (below-fold, client-only, deferred) ───── */}
+      <DeferredHorizontalExperience />
 
-      {/* Distance Calculator */}
-      <section className="py-32 bg-background border-y border-primary/5" aria-labelledby="proximity-heading">
+      {/* ── Gallery Preview (cv-auto defers rendering near viewport) ────── */}
+      <section className="py-32 bg-white cv-auto" aria-labelledby="gallery-heading">
         <Container className="space-y-12">
           <SectionHeading
-            eyebrow="Prime Proximity"
-            title="Local travel and running trails distance guide"
-            body="Cherush Guesthouse is located in a quiet residential pocket of Iten. Calculate distances and transit times to popular athletic and scenic hubs."
-            id="proximity-heading"
+            eyebrow="Aesthetic"
+            title="A visual sense of Cherush"
+            body="Explore the quiet corners, bright mornings, and premium finishes that make every stay memorable."
+            id="gallery-heading"
           />
           <div className="mt-12">
-            <DistanceCalculator />
+            <GalleryPreview items={gallery} />
           </div>
         </Container>
       </section>
 
-      {/* Guest Reviews */}
-      <section className="py-32 bg-white relative overflow-hidden" aria-labelledby="reviews-heading">
+      {/* ── Location Map (iframe, deferred) ─────────────────────────────── */}
+      <section
+        className="py-32 bg-background border-y border-primary/5 cv-auto"
+        aria-labelledby="location-heading"
+      >
+        <Container className="space-y-12">
+          <SectionHeading
+            eyebrow="Prime Location"
+            title="Find us in the Home of Champions"
+            body="Located just minutes away from famous running trails and Iten town center. Explore the area effortlessly."
+            id="location-heading"
+          />
+          <div className="mt-12">
+            <DeferredGoogleMap />
+          </div>
+        </Container>
+      </section>
+
+      {/* ── Guest Reviews (dynamic carousel, cv-auto) ────────────────────── */}
+      <section
+        className="py-32 bg-white relative overflow-hidden cv-auto"
+        aria-labelledby="reviews-heading"
+      >
         <Container>
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div>
@@ -115,9 +142,10 @@ export default async function HomePage() {
                 id="reviews-heading"
               />
               <div className="mt-16">
-                <TestimonialsCarousel reviews={reviews} />
+                <DeferredTestimonialsCarousel reviews={reviews} />
               </div>
             </div>
+            {/* Explicit h-[80vh] prevents CLS — container dimensions are known */}
             <div className="relative h-[80vh] w-full rounded-[24px] overflow-hidden">
               <Image
                 src={images.garden}
@@ -125,6 +153,7 @@ export default async function HomePage() {
                 fill
                 className="object-cover"
                 sizes="(min-width: 1024px) 50vw, 100vw"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-primary/10" />
             </div>
@@ -132,10 +161,10 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* FAQs */}
-      <FAQSection />
+      {/* ── FAQs (deferred, cv-auto) ─────────────────────────────────────── */}
+      <DeferredFAQSection />
 
-      {/* Final CTA */}
+      {/* ── Final CTA (SSR — text only) ──────────────────────────────────── */}
       <section className="py-32 bg-primary text-white" aria-labelledby="cta-heading">
         <Container className="text-center flex flex-col items-center">
           <SectionHeading
@@ -154,8 +183,8 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Floating CTA & WhatsApp */}
-      <FloatingActions />
+      {/* ── Floating CTA & WhatsApp (deferred, fully client-only) ───────── */}
+      <DeferredFloatingActions />
     </>
   )
 }

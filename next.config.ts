@@ -27,13 +27,19 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  // Package import optimisation — tree-shakes icon and animation libraries
+  // per-page instead of bundling the entire library.
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion', '@tanstack/react-query'],
+  },
+
   // Image optimisation
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 86400, // 24 hours
+    minimumCacheTTL: 604800, // 7 days
   },
 
   // Compression
@@ -44,6 +50,7 @@ const nextConfig: NextConfig = {
 
   // Disable X-Powered-By header
   poweredByHeader: false,
+
 
   async headers() {
     return [
@@ -61,6 +68,48 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+    ]
+  },
+
+  async redirects() {
+    return [
+      // Consolidate SEO duplicate pages
+      { source: '/hotels-in-iten', destination: '/rooms', permanent: true },
+      { source: '/luxury-accommodation-iten', destination: '/rooms', permanent: true },
+      { source: '/guest-house-in-iten', destination: '/', permanent: true },
+      { source: '/long-stay-accommodation', destination: '/rooms', permanent: true },
+      { source: '/monthly-stays-iten', destination: '/rooms', permanent: true },
+      { source: '/family-accommodation-iten', destination: '/rooms', permanent: true },
+      
+      // Consolidate 'About' related pages
+      { source: '/company-history', destination: '/about', permanent: true },
+      { source: '/mission-and-values', destination: '/about', permanent: true },
+      { source: '/sustainability', destination: '/about', permanent: true },
+      { source: '/team', destination: '/about', permanent: true },
+      { source: '/community', destination: '/about', permanent: true },
+      
+      // Consolidate 'Experience / Attractions' pages
+      { source: '/athletic-recovery-center', destination: '/experience', permanent: true },
+      { source: '/local-attractions', destination: '/experience', permanent: true },
+      { source: '/running-camps-iten', destination: '/experience', permanent: true },
+      
+      // Consolidate 'Amenities / Dining' pages
+      { source: '/conference-venue-iten', destination: '/amenities', permanent: true },
+      
+      // Consolidate 'Reviews' pages
+      { source: '/guest-stories', destination: '/reviews', permanent: true },
+      { source: '/leave-review', destination: '/reviews', permanent: true },
+      
+      // Consolidate 'Blog / Guide' pages
+      { source: '/travel-guide-iten', destination: '/blog', permanent: true },
+      
+      // Consolidate 'FAQ / Policies' pages
+      { source: '/accessibility', destination: '/faq', permanent: true },
+      { source: '/cancellation-policy', destination: '/faq', permanent: true },
+      { source: '/house-rules', destination: '/faq', permanent: true },
+      
+      // Media to gallery
+      { source: '/media', destination: '/gallery', permanent: true },
     ]
   },
 

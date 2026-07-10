@@ -48,7 +48,7 @@ export function Footer() {
         {/* Navigate */}
         <nav aria-label="Primary navigation">
           <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]">
-            Navigate
+            Explore
           </h2>
           <ul className="mt-4 space-y-3 text-sm text-[var(--color-muted)]">
             {navLinks.map((item) => (
@@ -58,139 +58,132 @@ export function Footer() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link href="/guest-house-in-iten" className="hover:text-[var(--color-primary)] transition-colors">
-                Guest House in Iten
-              </Link>
-            </li>
-            <li>
-              <Link href="/blog" className="hover:text-[var(--color-primary)] transition-colors">
-                Blog &amp; Guides
-              </Link>
-            </li>
-            <li>
-              <Link href="/faq" className="hover:text-[var(--color-primary)] transition-colors">
-                FAQ
-              </Link>
-            </li>
-            <li>
-              <Link href="/travel-guide-iten" className="hover:text-[var(--color-primary)] transition-colors">
-                Iten Travel Guide
-              </Link>
-            </li>
           </ul>
         </nav>
 
-        {/* Accommodation Types */}
-        <nav aria-label="Accommodation types">
+        {/* Accommodation & Experience */}
+        <nav aria-label="Accommodation & Experience">
           <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]">
-            Discover
+            Experience
           </h2>
           <ul className="mt-4 space-y-3 text-sm text-[var(--color-muted)]">
             <li>
-              <Link href="/guest-house-in-iten" className="hover:text-[var(--color-primary)] transition-colors">
-                Guest House in Iten
-              </Link>
-            </li>
-            <li>
-              <Link href="/accommodation-in-iten" className="hover:text-[var(--color-primary)] transition-colors">
+              <Link href="/rooms" className="hover:text-[var(--color-primary)] transition-colors">
                 Accommodation in Iten
               </Link>
             </li>
             <li>
-              <Link href="/hotels-in-iten" className="hover:text-[var(--color-primary)] transition-colors">
-                Hotels in Iten
+              <Link href="/experience" className="hover:text-[var(--color-primary)] transition-colors">
+                Running Camps
               </Link>
             </li>
             <li>
-              <Link href="/athlete-accommodation" className="hover:text-[var(--color-primary)] transition-colors">
-                Athlete Accommodation
+              <Link href="/experience" className="hover:text-[var(--color-primary)] transition-colors">
+                Local Attractions
               </Link>
             </li>
             <li>
-              <Link href="/family-accommodation-iten" className="hover:text-[var(--color-primary)] transition-colors">
-                Family Accommodation
-              </Link>
-            </li>
-            <li>
-              <Link href="/budget-accommodation-iten" className="hover:text-[var(--color-primary)] transition-colors">
-                Budget Accommodation
-              </Link>
-            </li>
-            <li>
-              <Link href="/long-stay-accommodation" className="hover:text-[var(--color-primary)] transition-colors">
-                Long Stays
-              </Link>
-            </li>
-            <li>
-              <Link href="/conference-venue-iten" className="hover:text-[var(--color-primary)] transition-colors">
-                Conference Venue
+              <Link href="/amenities" className="hover:text-[var(--color-primary)] transition-colors">
+                Dining
               </Link>
             </li>
           </ul>
         </nav>
 
-        {/* Legal & Trust */}
-        <nav aria-label="Legal and trust pages">
+        {/* Trust & Support */}
+        <nav aria-label="Support and policies">
           <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]">
-            Legal &amp; Trust
+            Support
           </h2>
           <ul className="mt-4 space-y-3 text-sm text-[var(--color-muted)]">
             <li>
-              <Link href="/about-the-owners" className="hover:text-[var(--color-primary)] transition-colors">
-                About The Founders
+              <Link href="/faq" className="hover:text-[var(--color-primary)] transition-colors">
+                Frequently Asked Questions
               </Link>
             </li>
             <li>
-              <Link href="/mission-and-values" className="hover:text-[var(--color-primary)] transition-colors">
-                Mission &amp; Values
-              </Link>
-            </li>
-            <li>
-              <Link href="/privacy-policy" className="hover:text-[var(--color-primary)] transition-colors">
+              <Link href="/faq" className="hover:text-[var(--color-primary)] transition-colors">
                 Privacy Policy
               </Link>
             </li>
             <li>
-              <Link href="/terms-and-conditions" className="hover:text-[var(--color-primary)] transition-colors">
-                Terms of Service
+              <Link href="/faq" className="hover:text-[var(--color-primary)] transition-colors">
+                Terms & Conditions
               </Link>
             </li>
             <li>
-              <Link href="/cancellation-policy" className="hover:text-[var(--color-primary)] transition-colors">
-                Cancellation Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="/house-rules" className="hover:text-[var(--color-primary)] transition-colors">
+              <Link href="/faq" className="hover:text-[var(--color-primary)] transition-colors">
                 House Rules
               </Link>
             </li>
           </ul>
         </nav>
+        {/* Newsletter & Hours */}
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-primary/5 rounded-2xl p-6 border border-primary/10">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-primary)]">
+              Stay in Touch
+            </h2>
+            <p className="mt-2 text-sm text-[var(--color-muted)]">
+              Get updates on running camps, local events, and exclusive offers from Cherush Guesthouse.
+            </p>
+            <a
+              href="https://wa.me/254700000000?text=Hi%2C%20I%27d%20like%20to%20receive%20updates%20from%20Cherush%20Guesthouse"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 flex items-center justify-center gap-2 bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg text-sm hover:bg-[var(--color-accent)] transition-colors w-full text-center"
+            >
+              Connect on WhatsApp
+            </a>
+          </div>
+
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]">
+              Business Hours
+            </h2>
+            <ul className="mt-4 space-y-2 text-sm text-[var(--color-muted)]">
+              <li className="flex justify-between border-b border-black/5 pb-2">
+                <span>Mon - Fri</span>
+                <span>7:00 AM - 9:00 PM</span>
+              </li>
+              <li className="flex justify-between border-b border-black/5 pb-2">
+                <span>Saturday</span>
+                <span>8:00 AM - 9:00 PM</span>
+              </li>
+              <li className="flex justify-between">
+                <span>Sunday</span>
+                <span>9:00 AM - 7:00 PM</span>
+              </li>
+            </ul>
+          </div>
+        </div>
       </Container>
 
-      <div className="mt-12 pt-8 border-t border-black/5 text-center text-sm text-[var(--color-muted)]">
-        <Container className="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="mt-16 pt-8 border-t border-black/5 text-center text-sm text-[var(--color-muted)]">
+        <Container className="flex flex-col md:flex-row justify-between items-center gap-6">
           <p>
             © {new Date().getFullYear()}{' '}
-            <Link href="/" className="hover:text-primary transition-colors">
+            <Link href="/" className="hover:text-primary transition-colors font-medium">
               {siteConfig.name}
             </Link>
             . All rights reserved. Iten, Kenya.
           </p>
-          <address className="not-italic text-xs text-muted">
-            <a href={`tel:${siteConfig.phone}`} className="hover:text-primary transition-colors">
+          <address className="not-italic text-xs text-muted flex flex-wrap justify-center gap-x-4 gap-y-2">
+            <a href={`tel:${siteConfig.phone}`} className="hover:text-primary transition-colors flex items-center gap-1">
               {siteConfig.phone}
             </a>
-            {' · '}
-            <a href={`mailto:${siteConfig.email}`} className="hover:text-primary transition-colors">
+            <span className="hidden md:inline">·</span>
+            <a href={`mailto:${siteConfig.email}`} className="hover:text-primary transition-colors flex items-center gap-1">
               {siteConfig.email}
+            </a>
+            <span className="hidden md:inline">·</span>
+            <a href={`https://maps.google.com/?q=${siteConfig.coordinates.lat},${siteConfig.coordinates.lng}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-1">
+              View on Map
             </a>
           </address>
           <div className="flex gap-4">
-            <Link href="/auth" className="hover:text-accent transition-colors">Guest Login</Link>
-            <Link href="/admin" className="hover:text-accent transition-colors">Admin</Link>
+            <Link href="/auth" className="hover:text-accent transition-colors text-xs uppercase tracking-widest">Guest Login</Link>
+            <Link href="/admin" className="hover:text-accent transition-colors text-xs uppercase tracking-widest">Admin</Link>
           </div>
         </Container>
       </div>

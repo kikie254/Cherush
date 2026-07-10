@@ -18,10 +18,13 @@ export const siteConfig = {
 } as const
 
 export const navLinks = [
-  { href: '/rooms', label: 'Rooms' },
-  { href: '/experience', label: 'Experience Iten' },
+  { href: '/rooms', label: 'Rooms & Rates' },
+  { href: '/experience', label: 'Attractions' },
+  { href: '/amenities', label: 'Dining & Amenities' },
   { href: '/gallery', label: 'Gallery' },
-  { href: '/bookings', label: 'Bookings' },
-  { href: '/about', label: 'About' },
+  { href: '/reviews', label: 'Reviews' },
+  { href: '/about', label: 'About Us' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' }
 ]

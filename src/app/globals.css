@@ -7,20 +7,28 @@
 }
 
 @theme {
-  --color-background: #f8f7f4;
-  --color-primary: #1d2a22;
-  --color-accent: #b85c38;
-  --color-premium: #c9a96e;
-  --color-text: #1b1b1b;
-  --color-card: #ffffff;
-  --color-muted: #5d675f;
+  /* Primary */
+  --color-primary: #1B2F23; /* Deep Forest Green */
+  --color-primary-brown: #5C4033; /* Warm Earth Brown */
+  --color-background: #FAF9F6; /* Soft Cream */
+
+  /* Secondary */
+  --color-card: #FDFBF7; /* Warm White */
+  --color-muted: #8C8C8C; /* Stone Grey */
+  --color-sand: #E6DFD3; /* Light Sand */
+
+  /* Accent */
+  --color-accent: #C5A059; /* Gold */
+  --color-olive: #7A8B6F; /* Muted Olive */
+  --color-text: #2B2B2B; /* Charcoal */
+  --color-premium: #C5A059; /* Gold */
   
   --font-display: var(--font-display, 'Cormorant Garamond', serif);
   --font-body: var(--font-body, 'Inter', sans-serif);
   --font-mono: var(--font-mono, 'Space Grotesk', sans-serif);
   
-  --shadow-soft: 0 8px 30px rgba(29, 42, 34, 0.04);
-  --shadow-premium: 0 12px 40px rgba(0, 0, 0, 0.04);
+  --shadow-soft: 0 8px 30px rgba(27, 47, 35, 0.04);
+  --shadow-premium: 0 12px 40px rgba(0, 0, 0, 0.06);
   
   --radius-2xl: 20px;
 }
@@ -28,8 +36,8 @@
 @layer base {
   body {
     @apply bg-background text-text font-body antialiased;
+    /* Subtle noise texture — no fixed attachment (breaks GPU layers on iOS Safari) */
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-    background-attachment: fixed;
     overflow-x: hidden;
     /* Offset for fixed navbar */
     scroll-padding-top: 5rem;
@@ -90,6 +98,18 @@ html.lenis, html.lenis body {
 
   .shadow-premium {
     box-shadow: var(--shadow-premium);
+  }
+
+  /* GPU-composited parallax layer — forces own layer to avoid repaint */
+  .parallax-layer {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  /* Defer rendering of off-screen sections for faster TTI */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 600px;
   }
 
   /* Screen reader only — WCAG 2.4.1 */

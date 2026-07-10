@@ -1,5 +1,6 @@
 import { cache } from 'react'
-import { createClient } from '@/lib/supabase/server'
+import { createClient as createServerClient } from '@/lib/supabase/server'
+import { createClient as createAnonClient } from '@supabase/supabase-js'
 import type { Booking, ContentBlock, GalleryItem, PricingRule, Review, Room, SiteSetting } from '@/types'
 import { attractions, faqs, seedContent, seedGallery, seedPricing, seedReviews, seedRooms, seedSettings } from '@/lib/site-data'
 
@@ -9,13 +10,18 @@ import { attractions, faqs, seedContent, seedGallery, seedPricing, seedReviews, 
 
 type OrderOpts = { column: string; ascending: boolean }
 
+// Used for public data fetching, safe for static generation
+const supabaseAnon = createAnonClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'placeholder'
+)
+
 async function supabaseSelect<T>(
   table: string,
   opts?: { order?: OrderOpts; filter?: Record<string, unknown> }
 ): Promise<T[] | null> {
   try {
-    const supabase = await createClient()
-    let query = supabase.from(table).select('*')
+    let query = supabaseAnon.from(table).select('*')
     if (opts?.filter) {
       for (const [key, value] of Object.entries(opts.filter)) {
         query = query.eq(key, value)
@@ -139,7 +145,7 @@ const mockBookings: Booking[] = [
 
 export const getBookings = cache(async (): Promise<Booking[]> => {
   try {
-    const supabase = await createClient()
+    const supabase = await createServerClient()
     const { data, error } = await supabase
       .from('bookings')
       .select('*, rooms(name)')
@@ -170,7 +176,7 @@ type ContactMessage = {
 
 export const getContactMessages = cache(async (): Promise<ContactMessage[]> => {
   try {
-    const supabase = await createClient()
+    const supabase = await createServerClient()
     const { data, error } = await supabase
       .from('contact_messages')
       .select('*')
@@ -190,23 +196,48 @@ export const getContactMessages = cache(async (): Promise<ContactMessage[]> => {
 // ---------------------------------------------------------------------------
 
 export const getAdminData = cache(async () => {
-  const [rooms, bookings, gallery, content, pricing, settings] = await Promise.all([
+  const [rooms, bookings, gallery, content, pricing, settings, inquiries] = await Promise.all([
     getAllRooms(),
     getBookings(),
     getGallery(),
     getContent(),
     getPricing(),
     getSettings(),
+    getContactMessages(),
   ])
+
+  const today = new Date().toISOString().split('T')[0]
 
   const revenue = bookings
     .filter((b) => ['approved', 'completed'].includes(b.status))
     .reduce((sum, b) => sum + b.total_amount, 0)
+  
+  const pending = bookings.filter((b) => b.status === 'pending').length
+  
+  const arrivalsToday = bookings.filter((b) => b.check_in === today && b.status === 'approved').length
+  const departuresToday = bookings.filter((b) => b.check_out === today && b.status === 'approved').length
+  
   const upcoming = bookings.filter((b) => b.status === 'approved').length
-  const pending  = bookings.filter((b) => b.status === 'pending').length
   const occupancyRate = rooms.length ? Math.round((upcoming / rooms.length) * 100) : 0
 
-  return { rooms, bookings, gallery, content, pricing, settings, stats: { revenue, upcoming, pending, occupancyRate } }
+  return { 
+    rooms, 
+    bookings, 
+    gallery, 
+    content, 
+    pricing, 
+    settings,
+    inquiries,
+    stats: { 
+      revenue, 
+      upcoming, 
+      pending, 
+      occupancyRate,
+      arrivalsToday,
+      departuresToday,
+      latestInquiries: inquiries.slice(0, 5)
+    } 
+  }
 })
 
 export { faqs, attractions }
