@@ -20,6 +20,16 @@ export const images = {
   lifestyleAlt: '/images/lifestyle/cherush-athlete-training.webp',
 }
 
+// All images that are confirmed uploaded on disk
+const roomImages = {
+  bed:            '/images/rooms/cherush-one-bedroom-iten-kenya-bed.webp',
+  closet:         '/images/rooms/cherush-one-bedroom-iten-kenya-bedroom-closet.webp',
+  livingRoom:     '/images/rooms/cherush-one-bedroom-iten-kenya-living-room.webp',
+  kitchen:        '/images/rooms/cherush-one-bedroom-iten-kenya-kitchen.webp',
+  bathroom:       '/images/rooms/cherush-one-bedroom-iten-kenya-bathroom.webp',
+  bathroomTub:    '/images/rooms/cherush-one-bedroom-iten-kenya-bathroom-tub.webp',
+}
+
 export const seedRooms: Room[] = [
   {
     id: '11111111-1111-1111-1111-111111111111',
@@ -31,8 +41,8 @@ export const seedRooms: Room[] = [
     price_per_night: 1000,
     weekly_rate: 6000,
     monthly_rate: 22000,
-    cover_image: images.livingRoom,
-    gallery: [images.livingRoom, images.garden],
+    cover_image: roomImages.livingRoom,
+    gallery: [roomImages.livingRoom, roomImages.kitchen, roomImages.bathroom],
     max_guests: 2,
     size_sqm: 34,
     beds: '1 king bed',
@@ -50,8 +60,8 @@ export const seedRooms: Room[] = [
     price_per_night: 1500,
     weekly_rate: 9000,
     monthly_rate: 32000,
-    cover_image: images.workspace,
-    gallery: [images.workspace, images.workspaceAlt],
+    cover_image: roomImages.bed,
+    gallery: [roomImages.bed, roomImages.closet, roomImages.kitchen],
     max_guests: 4,
     size_sqm: 56,
     beds: '1 queen bed + lounge sofa',
@@ -69,8 +79,8 @@ export const seedRooms: Room[] = [
     price_per_night: 2500,
     weekly_rate: 15000,
     monthly_rate: 50000,
-    cover_image: images.garden,
-    gallery: [images.garden, images.lifestyleAlt],
+    cover_image: roomImages.bathroomTub,
+    gallery: [roomImages.bathroomTub, roomImages.bathroom, roomImages.closet],
     max_guests: 5,
     size_sqm: 72,
     beds: '2 bedrooms + daybed',
