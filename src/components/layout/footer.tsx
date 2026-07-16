@@ -128,7 +128,7 @@ export function Footer() {
               Get updates on running camps, local events, and exclusive offers from Cherush Guesthouse.
             </p>
             <a
-              href="https://wa.me/254700000000?text=Hi%2C%20I%27d%20like%20to%20receive%20updates%20from%20Cherush%20Guesthouse"
+              href="https://wa.me/254724541664?text=Hi%2C%20I%27d%20like%20to%20receive%20updates%20from%20Cherush%20Guesthouse"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-4 flex items-center justify-center gap-2 bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg text-sm hover:bg-[var(--color-accent)] transition-colors w-full text-center"

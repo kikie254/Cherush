@@ -104,7 +104,7 @@ export default function FAQPage() {
                 Contact Us
               </Link>
               <a
-                href="https://wa.me/254700000000?text=Hi%2C%20I%20have%20a%20question%20about%20my%20booking"
+                href="https://wa.me/254724541664?text=Hi%2C%20I%20have%20a%20question%20about%20my%20booking"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex h-11 items-center justify-center rounded-lg border border-primary/20 px-6 text-sm font-medium text-primary transition-colors hover:bg-primary/5"

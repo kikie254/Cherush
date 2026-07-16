@@ -20,7 +20,7 @@ subfolder using the exact filename shown below.
 ## 📁 Folder Structure & Required Files
 
 ### `/images/hero/` — Main hero images (homepage banner)
-
+Deploy
 | Filename | Description | Status |
 |----------|-------------|--------|
 | `cherush-exterior-sunrise-hero.webp` | Primary hero — exterior at sunrise | ✅ Uploaded |

@@ -8,6 +8,35 @@ import { getMetadata, getBreadcrumbSchema, getOfferSchema } from '@/lib/seo'
 import { ShieldCheck, Wifi, Coffee, CarFront, Users } from 'lucide-react'
 import Link from 'next/link'
 
+/** Derives a descriptive, keyword-rich alt string from an image filename.
+ *  Falls back to a generic description if no keyword is matched.
+ *  Pattern: [feature]-[location]-[brand].webp */
+const ALT_MAP: Record<string, string> = {
+  'room':      'room interior',
+  'space':     'living space',
+  'bedroom':   'bedroom with king bed',
+  'bed':       'bedroom with king bed',
+  'kitchen':   'self-catering kitchenette',
+  'kitchenette': 'self-catering kitchenette',
+  'wardrobe':  'built-in wardrobe and storage',
+  'closet':    'built-in wardrobe and storage',
+  'bathroom':  'en-suite bathroom',
+  'washroom':  'en-suite bathroom',
+  'shower':    'hot-water shower',
+  'lounge':    'lounge area',
+  'living':    'living room',
+  'exterior':  'property exterior',
+  'garden':    'garden and grounds',
+  'patio':     'private patio',
+}
+
+function getGalleryAlt(roomName: string, src: string, index: number): string {
+  const filename = src.split('/').pop()?.toLowerCase() ?? ''
+  const matched = Object.entries(ALT_MAP).find(([key]) => filename.includes(key))
+  const feature = matched ? matched[1] : `interior view ${index + 1}`
+  return `${roomName} ${feature} — Cherush Guesthouse, Iten Kenya`
+}
+
 interface PageProps {
   params: Promise<{ slug: string }>
 }
@@ -73,7 +102,7 @@ export default async function RoomDetailPage({ params }: PageProps) {
           <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
             <div className="space-y-6">
               <div className="relative h-[26rem] overflow-hidden rounded-[32px] shadow-md group">
-                <Image src={room.cover_image} alt={room.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 1024px) 100vw, 60vw" priority />
+                <Image src={room.cover_image} alt={`${room.name} at Cherush Guesthouse, Iten Kenya — comfortable self-catering accommodation`} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 1024px) 100vw, 60vw" priority />
               </div>
               
               {/* Trust Badges for Conversion Optimization */}
@@ -99,7 +128,15 @@ export default async function RoomDetailPage({ params }: PageProps) {
               <div className="grid gap-4 sm:grid-cols-2">
                 {room.gallery.map((image, index) => (
                   <div key={`${image}-${index}`} className="relative h-56 overflow-hidden rounded-[24px] shadow-sm hover:shadow-md transition-shadow">
-                    <Image src={image} alt={`${room.name} view ${index + 1}`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 30vw" loading="lazy" />
+                  {/* Alt text describes the specific feature visible in each photo for Google Image SEO */}
+                  <Image
+                    src={image}
+                    alt={getGalleryAlt(room.name, image, index)}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 30vw"
+                    loading="lazy"
+                  />
                   </div>
                 ))}
               </div>

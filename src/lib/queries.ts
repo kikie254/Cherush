@@ -131,7 +131,7 @@ const mockBookings: Booking[] = [
     room_id: seedRooms[0].id,
     guest_name: 'Sample Guest',
     guest_email: 'guest@example.com',
-    guest_phone: '+254700000000',
+    guest_phone: '+254724541664',
     guests_count: 2,
     check_in: '2026-07-10',
     check_out: '2026-07-14',

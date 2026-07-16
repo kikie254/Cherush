@@ -7,13 +7,13 @@ export const siteConfig = {
   location: 'Iten, Elgeyo-Marakwet County, Kenya',
   address: 'Iten-Kabarnet Road, Iten, Elgeyo-Marakwet County, Kenya',
   email: 'info@cherushguesthouse.com',
-  phone: '+254 700 000 000',
-  whatsapp: '254700000000',
+  phone: '+254 724 541 664',
+  whatsapp: '254724541664',
   coordinates: { lat: 0.6707, lng: 35.5081 },
   social: {
     instagram: 'https://www.instagram.com/cherushguesthouse/',
     facebook: 'https://www.facebook.com/cherushguesthouse/',
-    whatsapp: 'https://wa.me/254700000000'
+    whatsapp: 'https://wa.me/254724541664'
   }
 } as const
 

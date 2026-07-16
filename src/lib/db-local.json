@@ -9,10 +9,14 @@
       "price_per_night": 1000,
       "weekly_rate": 6000,
       "monthly_rate": 22000,
-      "cover_image": "/lounge.svg",
+      "cover_image": "/bedsitter/bedsitter-room-iten-kenya-cherush-guesthouse.webp",
       "gallery": [
-        "/lounge.svg",
-        "/garden.svg"
+        "/bedsitter/bedsitter-room-iten-kenya-cherush-guesthouse.webp",
+        "/bedsitter/bedsitter-bedroom-king-bed-iten-kenya-cherush.webp",
+        "/bedsitter/bedsitter-kitchenette-self-catering-iten-kenya-cherush.webp",
+        "/bedsitter/bedsitter-wardrobe-storage-iten-kenya-cherush.webp",
+        "/bedsitter/bedsitter-bathroom-en-suite-iten-kenya-cherush.webp",
+        "/bedsitter/bedsitter-shower-hot-water-iten-kenya-cherush.webp"
       ],
       "max_guests": 2,
       "size_sqm": 34,
@@ -35,10 +39,14 @@
       "price_per_night": 1500,
       "weekly_rate": 9000,
       "monthly_rate": 32000,
-      "cover_image": "/workspace.svg",
+      "cover_image": "/onebedroom/one-bedroom-living-room-iten-kenya-cherush-guesthouse.webp",
       "gallery": [
-        "/workspace.svg",
-        "/desk.svg"
+        "/onebedroom/one-bedroom-living-room-iten-kenya-cherush-guesthouse.webp",
+        "/onebedroom/one-bedroom-king-bed-iten-kenya-cherush-guesthouse.webp",
+        "/onebedroom/one-bedroom-full-kitchen-iten-kenya-cherush-guesthouse.webp",
+        "/onebedroom/one-bedroom-wardrobe-closet-iten-kenya-cherush-guesthouse.webp",
+        "/onebedroom/one-bedroom-bathroom-en-suite-iten-kenya-cherush-guesthouse.webp",
+        "/onebedroom/one-bedroom-bathroom-tub-iten-kenya-cherush-guesthouse.webp"
       ],
       "max_guests": 4,
       "size_sqm": 56,
@@ -180,13 +188,13 @@
     "contact_phone": {
       "id": "s2",
       "key": "contact_phone",
-      "value": "+254 700 000 000",
+      "value": "+254 724 541 664",
       "description": null
     },
     "whatsapp_number": {
       "id": "s3",
       "key": "whatsapp_number",
-      "value": "254700000000",
+      "value": "254724541664",
       "description": null
     },
     "address": {
